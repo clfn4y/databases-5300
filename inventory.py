@@ -22,39 +22,68 @@ import pandas
 # data_type      object
 # has_null         True
 
+
+
+
+# TODO: figure out what is going on with location
+
+# TODO: logic for insering authors
+# TODO: logic for insering publishers
+# TODO: logic for insering quality
+# TODO: logic for insering prices
+# TODO: logic for insering publications
+
+# I think sanitization can be handled by the MariaDB module if that is
+# used to send SQL commands to the database directly instead of saving
+# statment as a string first!
+
+
+
+
 def generate_SQL(data):
     statements = [] # List
     # Remember publishers with this set
     publishers = {} # Set
     # Remember authors with this set
     authors = {} # Set
+    author_id = 0
     for row in data.itertuples():
-        book_id = row.book
-        title = '"' + row.title + '"' if isinstance(row.title, str) else 'NULL'
-        author = '"' + row.author + '"' if isinstance(row.author, str) \
-            else 'NULL'
-        binding = '"' + row.binding + '"' if isinstance(row.binding, str) \
-            else 'NULL'
-        release_date = row.pubdate if not numpy.isnan(row.pubdate) else 'NULL'
-        publisher = '"' + row.author + '"' if isinstance(row.author, str) \
-            else 'NULL'
-        price = float(row.price.replace("US$ ", '').replace(",", '')) \
-            if isinstance(row.price, str) else 'NULL'
-        location = '"???"'
-        # TODO: figure out what is going on with location
-        # TODO: logic for insering authors
-        # TODO: logic for insering publishers
-        # TODO: logic for insering quality
-        # TODO: logic for insering prices
-        # TODO: logic for insering publications
-        # I think sanitization can be handled by the MariaDB module if that is
-        # used to send SQL commands to the database directly instead of saving
-        # statment as a string first!
-        string = f"INSERT INTO Books (Book_ID, Title, Release_Date, Location)" \
-                 f" VALUES ({book_id}, {title}, {release_date}, " \
-                 f"{location});"
-        statements += [string]
+        author_id += 1
+
+        statements += insert_books(row)
+        statements += insert_publications(row, publishers, author_id)
+        statements += insert_quality(row)
+        statements += insert_languages(row)
+        statements += insert_authors(row, authors, author_id)
+
     return statements
+
+
+
+
+
+def insert_books(row):
+    book_id = row.book
+    title = '"' + row.title + '"' if isinstance(row.title, str) else 'NULL'
+    release_date = row.pubdate if not numpy.isnan(row.pubdate) else 'NULL'
+    location = '"???"'
+
+    return [f"INSERT INTO Books (Book_ID, Title, Release_Date, Location)" \
+                 f" VALUES ({book_id}, {title}, {release_date}, " \
+                 f"{location});"]
+    
+
+def insert_publications(row, publishers, author_id):
+    return []
+
+def insert_quality(row):
+    return []
+
+def insert_languages(row):
+    return []
+
+def insert_authors(row, authors, author_id):
+    return []
 
 # Loads a CSV file
 # Returns a Pandas dataframe and a table of information about each column
