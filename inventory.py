@@ -77,7 +77,11 @@ def insert_publications(row, publishers, author_id):
     return []
 
 def insert_quality(row):
-    return []
+    book_id = row.book
+    binding = '"' + row.binding + '"' if isinstance(row.binding, str) else 'NULL'
+    grade = '"' + row.condition + '"' if isinstance(row.condition, str) else 'NULL'
+
+    return [f"INSERT INTO Quality (Book_ID, Binding, Grade) VALUES ({book_id}, {binding}, {grade});"]
 
 def insert_languages(row):
     return []
