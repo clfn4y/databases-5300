@@ -131,7 +131,7 @@ def insert_quality(row):
     elif "no binding" in binding or "unbound" in binding or "broch" in binding:
         binding = "\"no binding\""
     elif "null" == binding:
-        binding = "\"no data\""
+        binding = "null"
     else:
         binding = "\"unknown binding\""
 
@@ -141,16 +141,12 @@ def insert_quality(row):
     elif "very good" in grade:
         grade = "\"fine / like new\""
     elif "good" in grade:
-        # grade = "\"good / bon / buone / bueno / buono / bien\""
         grade = "\"good\""
     elif "buone" in grade or "bon" in grade or "bueno" in grade or "buono" in grade or "bien" in grade:
-        # grade = "\"good / bon / buone / bueno / buono / bien\""
         grade = "\"good\""
     elif "akzeptabel" in grade or "acceptable" in grade:
-        # grade = "\"acceptable / akzeptabel\""
         grade = "\"good\""
     elif "befriedigend" in grade or "satisfactory" in grade or "satisfaisant" in grade or "ausreichend" in grade:
-        # grade = "\"satisfactory / befriedigend / satisfaisant\""
         grade = "\"good\""
     elif "fair" in grade:
         grade = "\"fair\""
@@ -169,7 +165,7 @@ def insert_quality(row):
     elif "poor" in grade or "malo" in grade or "bad" in grade or "schlecht" in grade or "ancien" in grade:
         grade = "\"poor\""
     elif "null" == grade:
-        grade = "\"no data\""
+        grade = "null"
     else:
         grade = "\"good\""
 
