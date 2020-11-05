@@ -200,9 +200,20 @@ def clean_author(string):
     return string
 
 def insert_authors(row, authors, author_id):
-    print(row.author + "\n->")
-    print(clean_author(row.author))
-    return []
+    author = '"' + clean_author(row.author) + '"'
+    actual_id = 0
+    result = []
+    if author not in authors:
+        authors[author] = author_id
+        actual_id = author_id
+        result += [f"INSERT INTO Authors (Author_ID, Name, Notes) VALUES " \
+            f"({actual_id}, {author}, \"\")"]
+    else:
+        actual_id = authors[author]
+    result += [f"INSERT INTO Publications (Author_ID, Book_ID) VALUES " \
+            f"({actual_id}, {row.book}, \"\")"]
+    # print(f"result = {result}")
+    return result
 
 # Loads a CSV file
 # Returns a Pandas dataframe and a table of information about each column
