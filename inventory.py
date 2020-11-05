@@ -196,6 +196,10 @@ def clean_author(string):
     x = string.split(',')
     if 1 < len(x):
         string = ' '.join((x[1],) + (x[0],))
+    string = string.replace('"', '')
+    string = string.replace('\'', '')
+    string = string.replace('/', '')
+    string = string.replace('\\', '')
     string = string.title().strip()
     return string
 
@@ -212,6 +216,7 @@ def insert_authors(row, authors, author_id):
         actual_id = authors[author]
     result += [f"INSERT INTO Publications (Author_ID, Book_ID) VALUES " \
             f"({actual_id}, {row.book}, \"\")"]
+    print(author)
     # print(f"result = {result}")
     return result
 
