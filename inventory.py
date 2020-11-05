@@ -8,6 +8,8 @@ import sys
 import numpy
 import pandas
 
+import collections
+
 # inventory.csv attributes:
 
 #             book   title  author binding  pubdate publisher  isbn10   isbn13
@@ -77,9 +79,90 @@ def insert_publications(row, publishers, author_id):
     return []
 
 def insert_quality(row):
+    # get parameters
     book_id = row.book
     binding = '"' + row.binding + '"' if isinstance(row.binding, str) else 'NULL'
     grade = '"' + row.condition + '"' if isinstance(row.condition, str) else 'NULL'
+
+    # make everything lower
+    binding = binding.lower()
+    grade = grade.lower()
+
+    # get rid of junk
+    if "-" in binding:
+        binding = binding.replace("-", " ")
+    if "." in binding:
+        binding = binding.replace(".", "")
+    if "-" in grade:
+        grade = grade.replace("-", " ")
+    if "." in grade:
+        grade = grade.replace(".", "")
+
+    # Binding: paperback, hardcover, cloth / hardboard, leather, magazine, no binding, no data, soft cover, staple bound, unknown binding, wraps
+    if "paperback" in binding or "paper back" in binding or "market" in binding:
+        binding = "\"paperback\""
+    elif "cloth" in binding:
+        binding = "\"cloth / hardboard\""
+    elif "hardcover" in binding or "hc" in binding or "hard" in binding:
+        binding = "\"hardcover\""
+    elif "unknown" in binding or "book" in binding:
+        binding = "\"unknown binding\""
+    elif "soft" in binding:
+        binding = "\"soft cover\""
+    elif "staple" in binding:
+        binding = "\"staple bound\""
+    elif "leather" in binding:
+        binding = "\"leather\""
+    elif "textbook" in binding or "school" in binding or "tb" in binding:
+        binding = "\"hardcover\""
+    elif "wrap" in binding:
+        binding = "\"wraps\""
+    elif "magazine" in binding:
+        binding = "\"magazine\""
+    elif "no binding" in binding or "unbound" in binding or "broch" in binding:
+        binding = "\"no binding\""
+    elif "null" == binding:
+        binding = "\"no data\""
+    else:
+        binding = "\"unknown binding\""
+
+    # Grade: new, fine / like new, near fine, good, fair, poor, no data, reading copy only
+    if "vg" in grade:
+        grade = "\"fine / like new\""
+    elif "very good" in grade:
+        grade = "\"fine / like new\""
+    elif "good" in grade:
+        # grade = "\"good / bon / buone / bueno / buono / bien\""
+        grade = "\"good\""
+    elif "buone" in grade or "bon" in grade or "bueno" in grade or "buono" in grade or "bien" in grade:
+        # grade = "\"good / bon / buone / bueno / buono / bien\""
+        grade = "\"good\""
+    elif "akzeptabel" in grade or "acceptable" in grade:
+        # grade = "\"acceptable / akzeptabel\""
+        grade = "\"good\""
+    elif "befriedigend" in grade or "satisfactory" in grade or "satisfaisant" in grade or "ausreichend" in grade:
+        # grade = "\"satisfactory / befriedigend / satisfaisant\""
+        grade = "\"good\""
+    elif "fair" in grade:
+        grade = "\"fair\""
+    elif "near fine" in grade or "nf" in grade:
+        grade = "\"near fine\""
+    elif "gut" in grade or "fine" in grade:
+        grade = "\"fine / like new\""
+    elif "like new" in grade or "likenew" in grade or "excellent" in grade:
+        grade = "\"fine / like new\""
+    elif "new" in grade or "neu" in grade or "nuevo" in grade:
+        grade = "\"new\""
+    elif "gebraucht" in grade or "used" in grade:
+        grade = "\"good\""
+    elif "reading copy" in grade:
+        grade = "\"reading copy only\""
+    elif "poor" in grade or "malo" in grade or "bad" in grade or "schlecht" in grade or "ancien" in grade:
+        grade = "\"poor\""
+    elif "null" == grade:
+        grade = "\"no data\""
+    else:
+        grade = "\"good\""
 
     return [f"INSERT INTO Quality (Book_ID, Binding, Grade) VALUES ({book_id}, {binding}, {grade});"]
 
