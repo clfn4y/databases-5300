@@ -7,6 +7,9 @@ import os
 import sys
 import numpy
 import pandas
+from isbnlib import info, is_isbn13
+
+import collections
 
 # inventory.csv attributes:
 
@@ -21,9 +24,6 @@ import pandas
 #            about_auth
 # data_type      object
 # has_null         True
-
-
-
 
 # TODO: figure out what is going on with location
 
@@ -47,13 +47,21 @@ def generate_SQL(data):
     # Remember authors with this set
     authors = {} # Set
     author_id = 0
+
+    #Used for language table
+    language_translate = []
+    with open(encoding = 'utf-8', file = 'locations.txt', mode = 'r') as f:
+        for line in f:          
+            language_translate.append(line.rstrip())
+
     for row in data.itertuples():
         author_id += 1
 
-        statements += insert_books(row)
+        rtn_str, location = insert_languages(row, language_translate)
+        statements += insert_books(row, location)
         statements += insert_publishers(row, publishers, author_id)
         statements += insert_quality(row)
-        statements += insert_languages(row)
+        statements += rtn_str
         statements += insert_authors(row, authors, author_id)
 
     return statements
@@ -62,12 +70,11 @@ def generate_SQL(data):
 
 
 
-def insert_books(row):
+def insert_books(row, location):
     book_id = row.book
     title = '"' + row.title + '"' if isinstance(row.title, str) else 'NULL'
     release_date = row.pubdate if not numpy.isnan(row.pubdate) else 'NULL'
-    location = '"???"'
-
+    
     return [f"INSERT INTO Books (Book_ID, Title, Release_Date, Location)" \
                  f" VALUES ({book_id}, {title}, {release_date}, " \
                  f"{location});"]
@@ -84,10 +91,121 @@ def insert_publishers(row, publishers, author_id):
                 f" VALUES ({book_id}, {publisher});"]
 
 def insert_quality(row):
-    return []
+    # get parameters
+    book_id = row.book
+    binding = '"' + row.binding + '"' if isinstance(row.binding, str) else 'NULL'
+    grade = '"' + row.condition + '"' if isinstance(row.condition, str) else 'NULL'
 
-def insert_languages(row):
-    return []
+    # make everything lower
+    binding = binding.lower()
+    grade = grade.lower()
+
+    # get rid of junk
+    if "-" in binding:
+        binding = binding.replace("-", " ")
+    if "." in binding:
+        binding = binding.replace(".", "")
+    if "-" in grade:
+        grade = grade.replace("-", " ")
+    if "." in grade:
+        grade = grade.replace(".", "")
+
+    # Binding: paperback, hardcover, cloth / hardboard, leather, magazine, no binding, no data, soft cover, staple bound, unknown binding, wraps
+    if "paperback" in binding or "paper back" in binding or "market" in binding:
+        binding = "\"paperback\""
+    elif "cloth" in binding:
+        binding = "\"cloth / hardboard\""
+    elif "hardcover" in binding or "hc" in binding or "hard" in binding:
+        binding = "\"hardcover\""
+    elif "unknown" in binding or "book" in binding:
+        binding = "\"unknown binding\""
+    elif "soft" in binding:
+        binding = "\"soft cover\""
+    elif "staple" in binding:
+        binding = "\"staple bound\""
+    elif "leather" in binding:
+        binding = "\"leather\""
+    elif "textbook" in binding or "school" in binding or "tb" in binding:
+        binding = "\"hardcover\""
+    elif "wrap" in binding:
+        binding = "\"wraps\""
+    elif "magazine" in binding:
+        binding = "\"magazine\""
+    elif "no binding" in binding or "unbound" in binding or "broch" in binding:
+        binding = "\"no binding\""
+    elif "null" == binding:
+        binding = "null"
+    else:
+        binding = "\"unknown binding\""
+
+    # Grade: new, fine / like new, near fine, good, fair, poor, no data, reading copy only
+    if "vg" in grade:
+        grade = "\"fine / like new\""
+    elif "very good" in grade:
+        grade = "\"fine / like new\""
+    elif "good" in grade:
+        grade = "\"good\""
+    elif "buone" in grade or "bon" in grade or "bueno" in grade or "buono" in grade or "bien" in grade:
+        grade = "\"good\""
+    elif "akzeptabel" in grade or "acceptable" in grade:
+        grade = "\"good\""
+    elif "befriedigend" in grade or "satisfactory" in grade or "satisfaisant" in grade or "ausreichend" in grade:
+        grade = "\"good\""
+    elif "fair" in grade:
+        grade = "\"fair\""
+    elif "near fine" in grade or "nf" in grade:
+        grade = "\"near fine\""
+    elif "gut" in grade or "fine" in grade:
+        grade = "\"fine / like new\""
+    elif "like new" in grade or "likenew" in grade or "excellent" in grade:
+        grade = "\"fine / like new\""
+    elif "new" in grade or "neu" in grade or "nuevo" in grade:
+        grade = "\"new\""
+    elif "gebraucht" in grade or "used" in grade:
+        grade = "\"good\""
+    elif "reading copy" in grade:
+        grade = "\"reading copy only\""
+    elif "poor" in grade or "malo" in grade or "bad" in grade or "schlecht" in grade or "ancien" in grade:
+        grade = "\"poor\""
+    elif "null" == grade:
+        grade = "null"
+    else:
+        grade = "\"good\""
+
+    return [f"INSERT INTO Quality (Book_ID, Binding, Grade) VALUES ({book_id}, {binding}, {grade});"]
+
+
+def insert_languages(row, ltol):
+    alter = ["English", "German", "French", "U.S.S.R", "China"]
+     
+    isbn13 = str(row.isbn13)[:-2]
+    book_id = row.book
+    
+    location = "NULL"
+    language = "NULL"
+
+    if is_isbn13(isbn13):
+
+        output = info(isbn13)   
+
+        location = output
+
+        for i in alter:
+            if i in output:
+                location = i
+
+        for i in ltol:
+            translate = i.split(",")
+            if location == translate[0]:
+                language = translate[1]
+                if ltol.index(i) < 3:
+                    language, location = location, language
+                break
+
+    rt_str = [f"INSERT INTO Languages (Book_ID, Language)" \
+                f" VALUES ({book_id}, {language});"]
+    
+    return rt_str, language
 
 def insert_authors(row, authors, author_id):
     return []
@@ -117,6 +235,8 @@ def main(args):
     if not os.path.exists('inventory.csv'):
         print('"inverntory.csv" is missing')
         exit(1)
+
+
     data, table = load_csv('inventory.csv', 'cp1252')
     print(table, end = '\n\n')
     statements = generate_SQL(data)
@@ -127,3 +247,6 @@ def main(args):
     return
 
 if __name__ == '__main__': main(sys.argv)
+
+
+
