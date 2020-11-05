@@ -8,6 +8,7 @@ import sys
 import numpy
 import pandas
 import re
+from difflib import SequenceMatcher
 
 import collections
 
@@ -170,8 +171,37 @@ def insert_quality(row):
 def insert_languages(row):
     return []
 
+def similarity(a, b):
+    return SequenceMatcher(
+        None, a.lower().strip(), b.lower().strip()
+    ).ratio()
+
+def clean_author(string):
+    string = string.lower()
+    if re.match('^.*\(.*;.*', string):
+        string = re.sub('^.*\(', '', string)
+        string = re.sub(';.*', '', string)
+    replacements = (
+        'sir( )+',
+        '( )*[\[(].*[\])]',
+        ';.*',
+        '( )*- aka .*',
+        '( )*and.*',
+        '( )*&.*',
+        '( )*-.*',
+        ', etc .*'
+    )
+    for i in replacements:
+        string = re.sub(i, '', string)
+    x = string.split(',')
+    if 1 < len(x):
+        string = ' '.join((x[1],) + (x[0],))
+    string = string.title().strip()
+    return string
+
 def insert_authors(row, authors, author_id):
-    
+    print(row.author + "\n->")
+    print(clean_author(row.author))
     return []
 
 # Loads a CSV file
