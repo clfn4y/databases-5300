@@ -7,6 +7,7 @@ import os
 import sys
 import numpy
 import pandas
+import re
 
 import collections
 
@@ -47,7 +48,7 @@ def generate_SQL(data):
     # Remember publishers with this set
     publishers = {} # Set
     # Remember authors with this set
-    authors = {} # Set
+    authors = dict() # Dictionary
     author_id = 0
     for row in data.itertuples():
         author_id += 1
@@ -170,6 +171,7 @@ def insert_languages(row):
     return []
 
 def insert_authors(row, authors, author_id):
+    
     return []
 
 # Loads a CSV file
