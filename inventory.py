@@ -57,10 +57,11 @@ def generate_SQL(data):
     for row in data.itertuples():
         author_id += 1
 
-        statements += insert_books(row)
+        rtn_str, location = insert_languages(row, language_translate)
+        statements += insert_books(row, location)
         statements += insert_publishers(row, publishers, author_id)
         statements += insert_quality(row)
-        statements += insert_languages(row, language_translate)
+        statements += rtn_str
         statements += insert_authors(row, authors, author_id)
 
     return statements
@@ -69,12 +70,11 @@ def generate_SQL(data):
 
 
 
-def insert_books(row):
+def insert_books(row, location):
     book_id = row.book
     title = '"' + row.title + '"' if isinstance(row.title, str) else 'NULL'
     release_date = row.pubdate if not numpy.isnan(row.pubdate) else 'NULL'
-    location = '"???"'
-
+    
     return [f"INSERT INTO Books (Book_ID, Title, Release_Date, Location)" \
                  f" VALUES ({book_id}, {title}, {release_date}, " \
                  f"{location});"]
@@ -201,10 +201,8 @@ def insert_languages(row, ltol):
 
     rt_str = [f"INSERT INTO Languages (Book_ID, Language)" \
                 f" VALUES ({book_id}, {language});"]
-
-    #Find a way to transfer location data to book insert function
-
-    return rt_str
+    
+    return rt_str, language
 
 def insert_authors(row, authors, author_id):
     return []
