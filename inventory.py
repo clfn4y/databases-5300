@@ -7,6 +7,8 @@ import os
 import sys
 import numpy
 import pandas
+import re
+from difflib import SequenceMatcher
 from isbnlib import info, is_isbn13
 
 import collections
@@ -45,7 +47,7 @@ def generate_SQL(data):
     # Remember publishers with this set
     publishers = {} # Set
     # Remember authors with this set
-    authors = {} # Set
+    authors = dict() # Dictionary
     author_id = 0
 
     #Used for language table
@@ -207,8 +209,53 @@ def insert_languages(row, ltol):
     
     return rt_str, language
 
+def similarity(a, b):
+    return SequenceMatcher(
+        None, a.lower().strip(), b.lower().strip()
+    ).ratio()
+
+def clean_author(string):
+    string = string.lower()
+    if re.match('^.*\(.*;.*', string):
+        string = re.sub('^.*\(', '', string)
+        string = re.sub(';.*', '', string)
+    replacements = (
+        'sir( )+',
+        '( )*[\[(].*[\])]',
+        ';.*',
+        '( )*- aka .*',
+        '( )*and.*',
+        '( )*&.*',
+        '( )*-.*',
+        ', etc .*'
+    )
+    for i in replacements:
+        string = re.sub(i, '', string)
+    x = string.split(',')
+    if 1 < len(x):
+        string = ' '.join((x[1],) + (x[0],))
+    string = string.replace('"', '')
+    string = string.replace('\'', '')
+    string = string.replace('/', '')
+    string = string.replace('\\', '')
+    string = string.title().strip()
+    return string
+
 def insert_authors(row, authors, author_id):
-    return []
+    author = '"' + clean_author(row.author) + '"'
+    actual_id = 0
+    result = []
+    if author not in authors:
+        authors[author] = author_id
+        actual_id = author_id
+        result += [f"INSERT INTO Authors (Author_ID, Name, Notes) VALUES " \
+            f"({actual_id}, {author}, \"\")"]
+    else:
+        actual_id = authors[author]
+    result += [f"INSERT INTO Publications (Author_ID, Book_ID) VALUES " \
+            f"({actual_id}, {row.book}, \"\")"]
+    # print(f"result = {result}")
+    return result
 
 # Loads a CSV file
 # Returns a Pandas dataframe and a table of information about each column
