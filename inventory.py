@@ -216,7 +216,6 @@ def insert_authors(row, authors, author_id):
         actual_id = authors[author]
     result += [f"INSERT INTO Publications (Author_ID, Book_ID) VALUES " \
             f"({actual_id}, {row.book}, \"\")"]
-    print(author)
     # print(f"result = {result}")
     return result
 
