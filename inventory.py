@@ -77,6 +77,9 @@ def insert_publishers(row, publishers, author_id):
     book_id = row.book
     publisher = '"' + row.publisher + '"' if isinstance(row.publisher, str) else 'NULL'
 
+    if (publisher == "NA".casefold() or publisher == "None".casefold()):
+        publisher = 'NULL'
+
     return [f"INSERT INTO Publishers (Book_ID, Publisher)" \
                 f" VALUES ({book_id}, {publisher});"]
 
