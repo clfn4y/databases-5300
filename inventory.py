@@ -58,7 +58,7 @@ def generate_SQL(data):
         author_id += 1
 
         statements += insert_books(row)
-        statements += insert_publications(row, publishers, author_id)
+        statements += insert_publishers(row, publishers, author_id)
         statements += insert_quality(row)
         statements += insert_languages(row, language_translate)
         statements += insert_authors(row, authors, author_id)
@@ -80,8 +80,12 @@ def insert_books(row):
                  f"{location});"]
     
 
-def insert_publications(row, publishers, author_id):
-    return []
+def insert_publishers(row, publishers, author_id):
+    book_id = row.book
+    publisher = '"' + row.publisher + '"' if isinstance(row.publisher, str) else 'NULL'
+
+    return [f"INSERT INTO Publishers (Book_ID, Publisher)" \
+                f" VALUES ({book_id}, {publisher});"]
 
 def insert_quality(row):
     # get parameters
