@@ -7,6 +7,7 @@ import os
 import sys
 import numpy
 import pandas
+from isbnlib import info, is_isbn13
 
 # inventory.csv attributes:
 
@@ -21,9 +22,6 @@ import pandas
 #            about_auth
 # data_type      object
 # has_null         True
-
-
-
 
 # TODO: figure out what is going on with location
 
@@ -50,11 +48,15 @@ def generate_SQL(data):
     for row in data.itertuples():
         author_id += 1
 
+
+        statements += insert_languages(row)
+
         statements += insert_books(row)
         statements += insert_publications(row, publishers, author_id)
         statements += insert_quality(row)
-        statements += insert_languages(row)
+        #statements += insert_languages(row)
         statements += insert_authors(row, authors, author_id)
+
 
     return statements
 
@@ -79,8 +81,40 @@ def insert_publications(row, publishers, author_id):
 def insert_quality(row):
     return []
 
+
 def insert_languages(row):
-    return []
+
+    ltol = []
+    with open(encoding = 'utf-8', file = 'locations.txt', mode = 'r') as f:
+        for line in f:          
+            ltol.append(line.rstrip())
+
+    alter = ["English", "German", "French", "U.S.S.R", "China"]
+     
+    isbn13 = str(row[8])[:-2]
+
+    location, language = "NULL"
+
+    if is_isbn13(isbn13):
+
+        output = info(isbn13)   
+
+        location = output
+
+        for i in alter:
+            if i in output:
+                location = i
+
+        for i in ltol:
+            translate = i.split(",")
+            if location == translate[0]:
+                language = translate[1]
+                if ltol.index(i) < 3:
+                    language, location = location, language
+                break
+
+    return location, language
+
 
 def insert_authors(row, authors, author_id):
     return []
@@ -110,13 +144,25 @@ def main(args):
     if not os.path.exists('inventory.csv'):
         print('"inverntory.csv" is missing')
         exit(1)
+
+
     data, table = load_csv('inventory.csv', 'cp1252')
     print(table, end = '\n\n')
+
+    #insert_languages(data["isbn10"], data["isbn13"])
+
     statements = generate_SQL(data)
-    with open(encoding = 'utf-8', file = 'output.txt', mode = 'w') as f:
-        for i in statements:
-            f.write(i + '\n')
+    #with open(encoding = 'utf-8', file = 'output.txt', mode = 'w') as f:
+        #for i in statements:
+            #f.write(i + '\n')
+
+
+    
+
     print('END OF LINE')
     return
 
 if __name__ == '__main__': main(sys.argv)
+
+
+

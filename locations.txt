@@ -1,0 +1,22 @@
+English,United States
+German,Germany
+French,France
+U.S.S.R,Russian
+Japan,Japanese
+Spain,Spanish
+Italy,Italian 
+Argentina,Spanish
+Mexico,Spanish
+Brazil,Portuguese
+India,Hindi
+Netherlands,Dutch
+Nepal,Nepali
+Turkey,Turkish
+Poland,Polish
+Denmark,Danish
+China,Mandarin
+Bolivia,Spanish
+Portugal,Portuguese
+Sweden,Swedish
+Finland,Finish
+Romania,Romanian
