@@ -170,6 +170,7 @@ def insert_languages(row):
     return []
 
 def insert_authors(row, authors, author_id):
+    
     return []
 
 # Loads a CSV file
