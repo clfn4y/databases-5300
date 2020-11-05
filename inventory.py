@@ -45,18 +45,21 @@ def generate_SQL(data):
     # Remember authors with this set
     authors = {} # Set
     author_id = 0
+
+    #Used for language table
+    language_translate = []
+    with open(encoding = 'utf-8', file = 'locations.txt', mode = 'r') as f:
+        for line in f:          
+            language_translate.append(line.rstrip())
+
     for row in data.itertuples():
         author_id += 1
-
-
-        statements += insert_languages(row)
 
         statements += insert_books(row)
         statements += insert_publications(row, publishers, author_id)
         statements += insert_quality(row)
-        #statements += insert_languages(row)
+        statements += insert_languages(row, language_translate)
         statements += insert_authors(row, authors, author_id)
-
 
     return statements
 
@@ -82,18 +85,14 @@ def insert_quality(row):
     return []
 
 
-def insert_languages(row):
-
-    ltol = []
-    with open(encoding = 'utf-8', file = 'locations.txt', mode = 'r') as f:
-        for line in f:          
-            ltol.append(line.rstrip())
-
+def insert_languages(row, ltol):
     alter = ["English", "German", "French", "U.S.S.R", "China"]
      
-    isbn13 = str(row[8])[:-2]
-
-    location, language = "NULL"
+    isbn13 = str(row.isbn13)[:-2]
+    book_id = row.book
+    
+    location = "NULL"
+    language = "NULL"
 
     if is_isbn13(isbn13):
 
@@ -113,8 +112,12 @@ def insert_languages(row):
                     language, location = location, language
                 break
 
-    return location, language
+    rt_str = [f"INSERT INTO Languages (Book_ID, Language)" \
+                f" VALUES ({book_id}, {language});"]
 
+    #Find a way to transfer location data to book insert function
+
+    return rt_str
 
 def insert_authors(row, authors, author_id):
     return []
@@ -148,17 +151,10 @@ def main(args):
 
     data, table = load_csv('inventory.csv', 'cp1252')
     print(table, end = '\n\n')
-
-    #insert_languages(data["isbn10"], data["isbn13"])
-
     statements = generate_SQL(data)
-    #with open(encoding = 'utf-8', file = 'output.txt', mode = 'w') as f:
-        #for i in statements:
-            #f.write(i + '\n')
-
-
-    
-
+    with open(encoding = 'utf-8', file = 'output.txt', mode = 'w') as f:
+        for i in statements:
+            f.write(i + '\n')
     print('END OF LINE')
     return
 
