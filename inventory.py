@@ -7,6 +7,7 @@ import os
 import sys
 import numpy
 import pandas
+import mariadb
 from isbnlib import info, is_isbn13
 
 import collections
@@ -235,6 +236,24 @@ def load_csv(filename, encoding = 'utf_8'):
 
 def main(args):
     print('START')
+
+    # mariadb stuff
+    try:
+    	conn = mariadb.connect(
+    		user="mdmfvz",
+    		password="my2BOYZ!",
+    		host="cs-class-db.srv.mst.edu",
+    		port=3306,
+    		database="mdmfvz"
+    	)
+
+    except mariadb.Error as e:
+    	print(f"Error connecting to MariaDB Platform: {e}")
+    	sys.exit(1)
+
+    curr = conn.cursor()
+    # end
+
     if not os.path.exists('inventory.csv'):
         print('"inverntory.csv" is missing')
         exit(1)
@@ -245,7 +264,13 @@ def main(args):
     statements = generate_SQL(data)
     with open(encoding = 'utf-8', file = 'output.txt', mode = 'w') as f:
         for i in statements:
-            f.write(i + '\n')
+        	# mdb
+        	try:
+        		curr.execute(i)
+        	except mariadb.Error as e:
+        		print(f"Error: {e}")
+        	# end
+            #f.write(i + '\n')
     print('END OF LINE')
     return
 

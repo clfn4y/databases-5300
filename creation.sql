@@ -71,7 +71,12 @@ CREATE TABLE Languages(
         REFERENCES Books(Book_ID)
         ON DELETE CASCADE
         ON UPDATE RESTRICT);
-
-
-
-
+       
+       
+DROP TABLE Prices;
+DROP TABLE Languages;
+DROP TABLE Quality;
+DROP TABLE Publications;
+DROP TABLE Publishers;
+DROP TABLE Authors;
+DROP TABLE Books;
