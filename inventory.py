@@ -58,10 +58,11 @@ def generate_SQL(data):
     for row in data.itertuples():
         author_id += 1
 
-        statements += insert_books(row)
+        rtn_str, location = insert_languages(row, language_translate)
+        statements += insert_books(row, location)
         statements += insert_publishers(row, publishers, author_id)
         statements += insert_quality(row)
-        statements += insert_languages(row, language_translate)
+        statements += rtn_str
         statements += insert_authors(row, authors, author_id)
 
     return statements
@@ -70,12 +71,11 @@ def generate_SQL(data):
 
 
 
-def insert_books(row):
+def insert_books(row, location):
     book_id = row.book
     title = '"' + row.title + '"' if isinstance(row.title, str) else 'NULL'
     release_date = row.pubdate if not numpy.isnan(row.pubdate) else 'NULL'
-    location = '"???"'
-
+    
     return [f"INSERT INTO Books (Book_ID, Title, Release_Date, Location)" \
                  f" VALUES ({book_id}, {title}, {release_date}, " \
                  f"{location});"]
@@ -84,6 +84,9 @@ def insert_books(row):
 def insert_publishers(row, publishers, author_id):
     book_id = row.book
     publisher = '"' + row.publisher + '"' if isinstance(row.publisher, str) else 'NULL'
+
+    if (publisher == "NA".casefold() or publisher == "None".casefold()):
+        publisher = 'NULL'
 
     return [f"INSERT INTO Publishers (Book_ID, Publisher)" \
                 f" VALUES ({book_id}, {publisher});"]
@@ -132,7 +135,7 @@ def insert_quality(row):
     elif "no binding" in binding or "unbound" in binding or "broch" in binding:
         binding = "\"no binding\""
     elif "null" == binding:
-        binding = "\"no data\""
+        binding = "null"
     else:
         binding = "\"unknown binding\""
 
@@ -142,16 +145,12 @@ def insert_quality(row):
     elif "very good" in grade:
         grade = "\"fine / like new\""
     elif "good" in grade:
-        # grade = "\"good / bon / buone / bueno / buono / bien\""
         grade = "\"good\""
     elif "buone" in grade or "bon" in grade or "bueno" in grade or "buono" in grade or "bien" in grade:
-        # grade = "\"good / bon / buone / bueno / buono / bien\""
         grade = "\"good\""
     elif "akzeptabel" in grade or "acceptable" in grade:
-        # grade = "\"acceptable / akzeptabel\""
         grade = "\"good\""
     elif "befriedigend" in grade or "satisfactory" in grade or "satisfaisant" in grade or "ausreichend" in grade:
-        # grade = "\"satisfactory / befriedigend / satisfaisant\""
         grade = "\"good\""
     elif "fair" in grade:
         grade = "\"fair\""
@@ -170,7 +169,7 @@ def insert_quality(row):
     elif "poor" in grade or "malo" in grade or "bad" in grade or "schlecht" in grade or "ancien" in grade:
         grade = "\"poor\""
     elif "null" == grade:
-        grade = "\"no data\""
+        grade = "null"
     else:
         grade = "\"good\""
 
@@ -206,10 +205,8 @@ def insert_languages(row, ltol):
 
     rt_str = [f"INSERT INTO Languages (Book_ID, Language)" \
                 f" VALUES ({book_id}, {language});"]
-
-    #Find a way to transfer location data to book insert function
-
-    return rt_str
+    
+    return rt_str, language
 
 def insert_authors(row, authors, author_id):
     return []
