@@ -324,7 +324,10 @@ def main(args):
             try:
                 curr.execute(i)
             except mariadb.Error as e:
+                print(i)
                 print(f"Error: {e}")
+
+
     
     conn.commit()
     print('END OF LINE')
