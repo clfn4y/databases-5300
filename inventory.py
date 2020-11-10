@@ -50,8 +50,8 @@ def generate_SQL(data):
     for row in data.itertuples():
         
         author_id += 1
-        
-        statements += insert_books(row)
+        rtn_str, location = insert_languages(row, language_translate)
+        statements += insert_books(row, location)
         statements += insert_publishers(row, publishers)
         statements += insert_quality(row)
         statements += insert_languages(row, language_translate)
@@ -59,7 +59,7 @@ def generate_SQL(data):
     
     return statements
 
-def insert_books(row):
+def insert_books(row, location):
     book_id = row.book
     title = '"' + row.title.replace('\"', "'") + '"' if isinstance(row.title, str) else '"' + 'None' '"'
     if len(title) > 254 : title = title[:254] + '\"' 
