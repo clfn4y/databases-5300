@@ -200,7 +200,7 @@ def insert_languages(row, ltol):
     
     #Find a way to transfer location data to book insert function
     
-    return rt_str
+    return rt_str, location
 
 def clean_author(string):
     string = string.lower()
