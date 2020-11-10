@@ -55,7 +55,9 @@ def generate_SQL(data):
     with open(encoding = 'utf-8', file = 'locations.txt', mode = 'r') as f:
         for line in f:          
             language_translate.append(line.rstrip())
-
+    
+    clean_authors, table = load_csv('clean_authors.csv')
+    
     for row in data.itertuples():
         author_id += 1
 
@@ -64,7 +66,7 @@ def generate_SQL(data):
         statements += insert_publishers(row, publishers, author_id)
         statements += insert_quality(row)
         statements += rtn_str
-        statements += insert_authors(row, authors, author_id)
+        statements += insert_authors(row, authors, author_id, clean_authors)
 
     return statements
 
@@ -219,35 +221,44 @@ def clean_author(string):
     if re.match('^.*\(.*;.*', string):
         string = re.sub('^.*\(', '', string)
         string = re.sub(';.*', '', string)
+    if re.match('^[A-Za-z-]+( )+[A-Za-z-]+,.*', string):
+        string = re.sub(',.*', '', string)
     replacements = (
-        'sir( )+',
-        '( )*[\[(].*[\])]',
+        '( )*[\[(].*[\])].*',
+        'sir ( )*',
         ';.*',
         '( )*- aka .*',
-        '( )*and.*',
-        '( )*&.*',
-        '( )*-.*',
-        ', etc .*'
+        '( )* and .*',
+        '( )* et .*',
+        '( )* & .*',
+        '( )* -.*',
+        ', etc .*',
+        '[,:;\&-]$'
     )
     for i in replacements:
         string = re.sub(i, '', string)
     x = string.split(',')
     if 1 < len(x):
         string = ' '.join((x[1],) + (x[0],))
+    string = re.sub('[ ][ ][ ]*', ' ', string)
     string = string.replace('"', '')
-    string = string.replace('\'', '')
-    string = string.replace('/', '')
-    string = string.replace('\\', '')
     string = string.title().strip()
     return string
 
-def insert_authors(row, authors, author_id):
-    author = '"' + clean_author(row.author) + '"'
+def insert_authors(row, authors, author_id, clean_authors):
+    frame = clean_authors.loc[clean_authors['author'] == row.author]
+    if frame.empty:
+        author = clean_author(row.author)
+    else:
+        author = str(frame.iloc[0]['clean'])
+    # with open(encoding = 'utf-8', file = 'authors.txt', mode = 'a') as f:
+    #     f.write(row.author + '\n->\n' + author + '\n\n')
     actual_id = 0
     result = []
     if author not in authors:
         authors[author] = author_id
         actual_id = author_id
+        author = '\"' + author+ '\"'
         result += [f"INSERT INTO Authors (Author_ID, Name, Notes) VALUES " \
             f"({actual_id}, {author}, \"\")"]
     else:
