@@ -1,20 +1,20 @@
 CREATE TABLE Books(
-    Book_ID INT UNSIGNED NOT NULL,
+    Book_ID BIGINT UNSIGNED NOT NULL,
     Title VARCHAR(255) NOT NULL,
-    Release_Date DATE,
+    Release_Date INT,
     Location VARCHAR(255),
     PRIMARY KEY(Book_ID));
   
 
 CREATE TABLE Authors(
-    Author_ID INT UNSIGNED NOT NULL,
+    Author_ID BIGINT UNSIGNED NOT NULL,
     Name VARCHAR(255) NOT NULL,
     Notes LONGTEXT,
     PRIMARY KEY(Author_ID));  
    
    
 CREATE TABLE Prices(
-    Book_ID INT UNSIGNED NOT NULL,
+    Book_ID BIGINT UNSIGNED NOT NULL,
     Price DECIMAL(10,2) UNSIGNED NOT NULL,
     PRIMARY KEY(Book_ID, Price),
     CONSTRAINT fk_book_id
@@ -24,8 +24,8 @@ CREATE TABLE Prices(
        
 
 CREATE TABLE Publishers(
-    Book_ID INT UNSIGNED NOT NULL,
-    Publisher VARCHAR(255) NOT NULL,
+    Book_ID BIGINT UNSIGNED NOT NULL,
+    Publisher VARCHAR(255),
     PRIMARY KEY(Book_ID),
     CONSTRAINT fk_book_id_2
         FOREIGN KEY(Book_ID)
@@ -35,8 +35,8 @@ CREATE TABLE Publishers(
         
        
 CREATE TABLE Publications(
-    Author_ID INT UNSIGNED NOT NULL,
-    Book_ID INT UNSIGNED NOT NULL,
+    Author_ID BIGINT UNSIGNED NOT NULL,
+    Book_ID BIGINT UNSIGNED NOT NULL,
     PRIMARY KEY(Author_ID, Book_ID),
     CONSTRAINT fk_author_id
         FOREIGN KEY(Author_ID)
@@ -51,7 +51,7 @@ CREATE TABLE Publications(
            
    
 CREATE TABLE Quality(
-    Book_ID INT UNSIGNED NOT NULL,
+    Book_ID BIGINT UNSIGNED NOT NULL,
     Binding VARCHAR(255),
     Grade VARCHAR(255),
     PRIMARY KEY(Book_ID),
@@ -63,7 +63,7 @@ CREATE TABLE Quality(
        
        
 CREATE TABLE Languages(
-    Book_ID INT UNSIGNED NOT NULL,
+    Book_ID BIGINT UNSIGNED NOT NULL,
     Language VARCHAR(255),
     PRIMARY KEY(Book_ID),
     CONSTRAINT fk_book_id5
@@ -72,7 +72,7 @@ CREATE TABLE Languages(
         ON DELETE CASCADE
         ON UPDATE RESTRICT);
        
-       
+/*      
 DROP TABLE Prices;
 DROP TABLE Languages;
 DROP TABLE Quality;
@@ -80,3 +80,4 @@ DROP TABLE Publications;
 DROP TABLE Publishers;
 DROP TABLE Authors;
 DROP TABLE Books;
+*/
