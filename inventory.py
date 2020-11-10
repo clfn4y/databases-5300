@@ -52,7 +52,7 @@ def generate_SQL(data):
         author_id += 1
         
         statements += insert_books(row)
-        statements += insert_publishers(row, publishers, author_id)
+        statements += insert_publishers(row, publishers)
         statements += insert_quality(row)
         statements += insert_languages(row, language_translate)
         statements += insert_authors(row, authors, author_id, clean_authors)
@@ -70,9 +70,12 @@ def insert_books(row):
                  f" VALUES ({book_id}, {title}, {release_date}, " \
                  f"{location});"]
 
-def insert_publishers(row, publishers, author_id):
+def insert_publishers(row, publishers):
     book_id = row.book
     publisher = '"' + row.publisher.replace('\"', "'") + '"' if isinstance(row.publisher, str) else 'NULL'
+
+    if (publisher == 'NA'.casefold() or publisher == 'None'.casefold()):
+        publisher = 'NULL'
     
     return [f"INSERT INTO Publishers (Book_ID, Publisher)" \
                 f" VALUES ({book_id}, {publisher});"]
