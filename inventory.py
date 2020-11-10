@@ -54,7 +54,7 @@ def generate_SQL(data):
         statements += insert_publishers(row, publishers, author_id)
         statements += insert_quality(row)
         statements += insert_languages(row, language_translate)
-        statements += insert_authors(row, authors, author_id)
+        statements += insert_authors(row, authors, author_id, clean_authors)
     
     return statements
 
