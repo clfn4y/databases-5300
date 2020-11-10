@@ -244,11 +244,18 @@ def insert_authors(row, authors, author_id, clean_authors):
     #     f.write(row.author + '\n->\n' + author + '\n\n')
     actual_id = 0
     result = []
+    notes = ""
     if author not in authors:
         authors[author] = author_id
         actual_id = author_id
         author = '\"' + author+ '\"'
-        notes = 'NULL'
+        if not isinstance(row.about_auth, str):
+            notes = 'NULL'
+        else:
+            if row.about_auth == 'NA':
+                notes = 'NULL'
+            else:
+                notes = '"' + row.about_auth + '"'
         result += [f"INSERT INTO Authors (Author_ID, Name, Notes) VALUES " \
             f"({actual_id}, {author}, {notes})"]
     else:
