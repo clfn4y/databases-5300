@@ -264,7 +264,7 @@ def insert_price(row):
 
     # modify price based on if it is NA or not
     if ("US$" in price_init):
-        price = price_init.strip("US$ ")
+        price = price_init.replace("US$ ", "")
     else:
         price = 'NULL'
     
