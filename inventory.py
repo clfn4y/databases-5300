@@ -175,7 +175,7 @@ def insert_languages(row, ltol):
     book_id = row.book
     
     location = "NULL"
-    language = "NULL"
+    language = "English"
     
     if is_isbn13(isbn13):
         
