@@ -56,6 +56,7 @@ def generate_SQL(data):
         statements += insert_quality(row)
         statements += insert_languages(row, language_translate)
         statements += insert_authors(row, authors, author_id, clean_authors)
+        statements += insert_price(row)
     
     return statements
 
@@ -253,6 +254,20 @@ def insert_authors(row, authors, author_id, clean_authors):
             f"({actual_id}, {row.book}, \"\")"]
     # print(f"result = {result}")
     return result
+
+def insert_price(row):
+    # grab book_id and initial price value
+    book_id = row.book
+    price_init = '"' + row.price + '"' if isinstance(row.price, str) else 'NULL'
+
+    # modify price based on if it is NA or not
+    if ("US$" in price_init):
+        price = price_init.strip("US$ ")
+    else:
+        price = 'NULL'
+    
+    return [f"INSERT INTO Prices (Book_ID, Price)" \
+                f" VALUES ({book_id}, {price});"]
 
 # Loads a CSV file
 # Returns a Pandas dataframe and a table of information about each column
