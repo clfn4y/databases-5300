@@ -121,7 +121,7 @@ def insert_quality(row):
     elif "no binding" in binding or "unbound" in binding or "broch" in binding:
         binding = "\"no binding\""
     elif "null" == binding:
-        binding = "\"no data\""
+        binding = "NULL"
     else:
         binding = "\"unknown binding\""
     
@@ -159,7 +159,7 @@ def insert_quality(row):
     elif "poor" in grade or "malo" in grade or "bad" in grade or "schlecht" in grade or "ancien" in grade:
         grade = "\"poor\""
     elif "null" == grade:
-        grade = "\"no data\""
+        grade = "NULL"
     else:
         grade = "\"good\""
     
