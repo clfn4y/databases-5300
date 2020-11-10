@@ -254,7 +254,7 @@ def insert_authors(row, authors, author_id, clean_authors):
     else:
         actual_id = authors[author]
     result += [f"INSERT INTO Publications (Author_ID, Book_ID) VALUES " \
-            f"({actual_id}, {row.book}, {notes})"]
+            f"({actual_id}, {row.book})"]
     # print(f"result = {result}")
     return result
 
