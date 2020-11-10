@@ -4,6 +4,7 @@
 # Jack Dixon III
 
 import os
+import re
 import sys
 import numpy
 import pandas
