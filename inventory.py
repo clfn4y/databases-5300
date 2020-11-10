@@ -229,6 +229,8 @@ def clean_author(string):
     string = re.sub('[ ][ ][ ]*', ' ', string)
     string = string.replace('"', '')
     string = string.title().strip()
+    if string == "":
+        string = "Default"
     return string
 
 def insert_authors(row, authors, author_id, clean_authors):
