@@ -50,17 +50,17 @@ def generate_SQL(data):
     for row in data.itertuples():
         
         author_id += 1
-        
-        statements += insert_books(row)
+        rtn_str, location = insert_languages(row, language_translate)
+        statements += insert_books(row, location)
         statements += insert_publishers(row, publishers)
         statements += insert_quality(row)
-        statements += insert_languages(row, language_translate)
+        statements += rtn_str
         statements += insert_authors(row, authors, author_id, clean_authors)
         statements += insert_price(row)
     
     return statements
 
-def insert_books(row):
+def insert_books(row, location):
     book_id = row.book
     title = '"' + row.title.replace('\"', "'") + '"' if isinstance(row.title, str) else '"' + 'None' '"'
     if len(title) > 254 : title = title[:254] + '\"' 
@@ -176,7 +176,7 @@ def insert_languages(row, ltol):
     book_id = row.book
     
     location = "NULL"
-    language = "NULL"
+    language = "English"
     
     if is_isbn13(isbn13):
         
@@ -201,7 +201,7 @@ def insert_languages(row, ltol):
     
     #Find a way to transfer location data to book insert function
     
-    return rt_str
+    return rt_str, location
 
 def clean_author(string):
     string = string.lower()
@@ -230,6 +230,8 @@ def clean_author(string):
     string = re.sub('[ ][ ][ ]*', ' ', string)
     string = string.replace('"', '')
     string = string.title().strip()
+    if string == "":
+        string = "Default"
     return string
 
 def insert_authors(row, authors, author_id, clean_authors):
