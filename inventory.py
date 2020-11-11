@@ -65,7 +65,6 @@ def insert_books(row, location):
     title = '"' + row.title.replace('\"', "'") + '"' if isinstance(row.title, str) else '"' + 'None' '"'
     if len(title) > 254 : title = title[:254] + '\"' 
     release_date = int(row.pubdate) if not numpy.isnan(row.pubdate) else 'NULL'
-    location = '"???"'
     
     return [f"INSERT INTO Books (Book_ID, Title, Release_Date, Location)" \
                  f" VALUES ({book_id}, {title}, {release_date}, " \
@@ -175,7 +174,7 @@ def insert_languages(row, ltol):
     isbn13 = str(row.isbn13)[:-2]
     book_id = row.book
     
-    location = "NULL"
+    location = "United States"
     language = "English"
     
     if is_isbn13(isbn13):
@@ -195,11 +194,12 @@ def insert_languages(row, ltol):
                 if ltol.index(i) < 3:
                     language, location = location, language
                 break
+
+    location = "'" + location + "'"
     
     rt_str = [f"INSERT INTO Languages (Book_ID, Language)" \
                 f" VALUES ({book_id}, '{language}');"]
     
-    #Find a way to transfer location data to book insert function
     
     return rt_str, location
 
@@ -240,8 +240,7 @@ def insert_authors(row, authors, author_id, clean_authors):
         author = clean_author(row.author)
     else:
         author = str(frame.iloc[0]['clean'])
-    # with open(encoding = 'utf-8', file = 'authors.txt', mode = 'a') as f:
-    #     f.write(row.author + '\n->\n' + author + '\n\n')
+
     actual_id = 0
     result = []
     notes = ""
@@ -274,7 +273,9 @@ def insert_price(row):
     if ("US$" in price_init):
         price = price_init.replace("US$ ", "")
     else:
-        price = 'NULL'
+        price = '0.00'
+
+    price = price.replace(",","")
     
     return [f"INSERT INTO Prices (Book_ID, Price)" \
                 f" VALUES ({book_id}, {price});"]
@@ -302,7 +303,6 @@ def load_csv(filename, encoding = 'utf_8'):
 def main(args):
     print('START')
     
-    # mariadb stuff
     try:
     	conn = mariadb.connect(
     		user="mdmfvz",
@@ -317,7 +317,7 @@ def main(args):
     	sys.exit(1)
     
     curr = conn.cursor()
-    # end
+
     
     if not os.path.exists('inventory.csv'):
         print('"inverntory.csv" is missing')
@@ -326,17 +326,13 @@ def main(args):
     data, table = load_csv('inventory.csv', 'cp1252')
     print(table, end = '\n\n')
     statements = generate_SQL(data)
-    it = 0
-    with open(encoding = 'utf-8', file = 'output.txt', mode = 'w') as f:
-        for i in statements:
-            try:
-                curr.execute(i)
-            except mariadb.Error as e:
-                print(i)
-                print(f"Error: {e}")
+    for i in statements:
+        try:
+            curr.execute(i)
+        except mariadb.Error as e:
+            print(i)
+            print(f"Error: {e}")
 
-
-    
     conn.commit()
     print('END OF LINE')
     conn.close()
