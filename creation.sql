@@ -15,7 +15,7 @@ CREATE TABLE Authors(
    
 CREATE TABLE Prices(
     Book_ID BIGINT UNSIGNED NOT NULL,
-    Price DECIMAL(10,2) UNSIGNED NOT NULL,
+    Price DECIMAL(10,2) UNSIGNED,
     PRIMARY KEY(Book_ID, Price),
     CONSTRAINT fk_book_id
         FOREIGN KEY (Book_ID) REFERENCES Books (Book_ID)
@@ -72,7 +72,7 @@ CREATE TABLE Languages(
         ON DELETE CASCADE
         ON UPDATE RESTRICT);
        
-/*      
+    
 DROP TABLE Prices;
 DROP TABLE Languages;
 DROP TABLE Quality;
@@ -80,4 +80,12 @@ DROP TABLE Publications;
 DROP TABLE Publishers;
 DROP TABLE Authors;
 DROP TABLE Books;
-*/
+
+SHOW PROCESSLIST;
+
+SELECT * FROM Prices;
+SELECT * FROM Languages;
+SELECT * FROM Quality;
+SELECT * FROM Publishers;
+SELECT * FROM Authors;
+SELECT * FROM Books;
