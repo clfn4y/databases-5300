@@ -235,19 +235,20 @@ def clean_author(string):
     return string
 
 def insert_authors(row, authors, author_id, clean_authors):
-    frame = clean_authors.loc[clean_authors['author'] == row.author]
-    if frame.empty:
-        author = clean_author(row.author)
-    else:
-        author = str(frame.iloc[0]['clean'])
-
+    author = 'NULL'
+    if isinstance(row.binding, str):
+        frame = clean_authors.loc[clean_authors['author'] == row.author]
+        if frame.empty:
+            author = clean_author(row.author)
+        else:
+            author = str(frame.iloc[0]['clean'])
     actual_id = 0
     result = []
     notes = ""
     if author not in authors:
         authors[author] = author_id
         actual_id = author_id
-        author = '\"' + author+ '\"'
+        if author != 'NULL': author = '\"' + author+ '\"'
         if not isinstance(row.about_auth, str):
             notes = 'NULL'
         else:
