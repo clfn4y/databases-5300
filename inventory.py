@@ -73,7 +73,7 @@ def insert_books(row, location):
 def insert_publishers(row, publishers):
     book_id = row.book
     publisher = '"' + row.publisher.replace('\"', "'") + '"' if isinstance(row.publisher, str) else 'NULL'
-
+    
     if (publisher == 'NA'.casefold() or publisher == 'None'.casefold()):
         publisher = 'NULL'
     
@@ -194,12 +194,11 @@ def insert_languages(row, ltol):
                 if ltol.index(i) < 3:
                     language, location = location, language
                 break
-
+    
     location = "'" + location + "'"
     
     rt_str = [f"INSERT INTO Languages (Book_ID, Language)" \
                 f" VALUES ({book_id}, '{language}');"]
-    
     
     return rt_str, location
 
@@ -269,13 +268,13 @@ def insert_price(row):
     # grab book_id and initial price value
     book_id = row.book
     price_init = '"' + row.price + '"' if isinstance(row.price, str) else 'NULL'
-
+    
     # modify price based on if it is NA or not
     if ("US$" in price_init):
         price = price_init.replace("US$ ", "")
     else:
         price = '0.00'
-
+    
     price = price.replace(",","")
     
     return [f"INSERT INTO Prices (Book_ID, Price)" \
@@ -318,7 +317,6 @@ def main(args):
     	sys.exit(1)
     
     curr = conn.cursor()
-
     
     if not os.path.exists('inventory.csv'):
         print('"inverntory.csv" is missing')
@@ -333,7 +331,7 @@ def main(args):
         except mariadb.Error as e:
             print(i)
             print(f"Error: {e}")
-
+    
     conn.commit()
     print('END OF LINE')
     conn.close()
