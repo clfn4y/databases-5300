@@ -36,7 +36,7 @@ def generate_SQL(data):
     # Remember publishers with this set
     publishers = {} # Set
     # Remember authors with this set
-    authors = {} # Set
+    authors = dict()
     author_id = 0
     
     #Used for language table
