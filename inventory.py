@@ -234,16 +234,41 @@ def clean_author(string):
     return string
 
 def insert_authors(row, authors, author_id, clean_authors):
-    author = 'Default'
+    author = 'No author'
+    actual_id = 0
+    result = []
+    notes = ""
+    if re.match('^.*;.*[, ].*', row.author):
+        x = row.author.split(';')
+        mult_authors = [
+            clean_author(i) for i in x
+            if 4 < len(clean_author(i))
+        ]
+        for i in mult_authors:
+            if i not in authors:
+                authors[i] = author_id
+                actual_id = author_id
+                author = '\"' + i + '\"'
+                if not isinstance(row.about_auth, str):
+                    notes = 'NULL'
+                else:
+                    if row.about_auth == 'NA':
+                        notes = 'NULL'
+                    else:
+                        notes = '"' + row.about_auth + '"'
+                result += [f"INSERT INTO Authors (Author_ID, Name, Notes) VALUES " \
+                           f"({actual_id}, {author}, {notes})"]
+            else:
+                actual_id = authors[i]
+            result += [f"INSERT INTO Publications (Author_ID, Book_ID) VALUES " \
+                    f"({actual_id}, {row.book})"]
+        return result
     if isinstance(row.binding, str):
         frame = clean_authors.loc[clean_authors['author'] == row.author]
         if frame.empty:
             author = clean_author(row.author)
         else:
             author = str(frame.iloc[0]['clean'])
-    actual_id = 0
-    result = []
-    notes = ""
     if author not in authors:
         authors[author] = author_id
         actual_id = author_id
