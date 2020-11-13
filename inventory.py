@@ -234,7 +234,7 @@ def clean_author(string):
     return string
 
 def insert_authors(row, authors, author_id, clean_authors):
-    author = 'NULL'
+    author = 'Default'
     if isinstance(row.binding, str):
         frame = clean_authors.loc[clean_authors['author'] == row.author]
         if frame.empty:
