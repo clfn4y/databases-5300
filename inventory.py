@@ -230,13 +230,13 @@ def clean_author(string):
     string = re.sub('[ ][ ][ ]*', ' ', string)
     string = string.replace('"', '')
     string = string.title().strip()
-    if string == "":
-        string = "Default"
+    if string == '':
+        string = 'NA'
     return string
 
 def insert_authors(row, authors, clean_authors):
     global author_id
-    author = 'No author'
+    author = 'NA'
     actual_id = 0
     result = []
     notes = ""
@@ -244,8 +244,9 @@ def insert_authors(row, authors, clean_authors):
         x = row.author.split(';')
         mult_authors = [
             clean_author(i) for i in x
-            if 4 < len(clean_author(i))
         ]
+        # Remove duplicates
+        mult_authors = list(dict.fromkeys(mult_authors))
         for i in mult_authors:
             if i not in authors:
                 author_id += 1
