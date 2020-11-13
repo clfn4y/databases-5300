@@ -13,6 +13,8 @@ from isbnlib import info, is_isbn13
 
 import collections
 
+author_id = 0
+
 # inventory.csv attributes:
 
 #             book   title  author binding  pubdate publisher  isbn10   isbn13
@@ -49,13 +51,12 @@ def generate_SQL(data):
     
     for row in data.itertuples():
         
-        author_id += 1
         rtn_str, location = insert_languages(row, language_translate)
         statements += insert_books(row, location)
         statements += insert_publishers(row, publishers)
         statements += insert_quality(row)
         statements += rtn_str
-        statements += insert_authors(row, authors, author_id, clean_authors)
+        statements += insert_authors(row, authors, clean_authors)
         statements += insert_price(row)
     
     return statements
@@ -233,7 +234,8 @@ def clean_author(string):
         string = "Default"
     return string
 
-def insert_authors(row, authors, author_id, clean_authors):
+def insert_authors(row, authors, clean_authors):
+    global author_id
     author = 'No author'
     actual_id = 0
     result = []
@@ -246,6 +248,7 @@ def insert_authors(row, authors, author_id, clean_authors):
         ]
         for i in mult_authors:
             if i not in authors:
+                author_id += 1
                 authors[i] = author_id
                 actual_id = author_id
                 author = '\"' + i + '\"'
@@ -270,6 +273,7 @@ def insert_authors(row, authors, author_id, clean_authors):
         else:
             author = str(frame.iloc[0]['clean'])
     if author not in authors:
+        author_id += 1
         authors[author] = author_id
         actual_id = author_id
         if author != 'NULL': author = '\"' + author+ '\"'
