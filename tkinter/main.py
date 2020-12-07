@@ -102,6 +102,9 @@ other_language = IntVar()
 
 # Button(inner_frame, text='Quit', command=inner_frame.quit).grid(row=6, sticky=W, pady=4)
 
+query_str1 = StringVar()
+query_str2 = StringVar()
+
 def inner_frame_render(*args):
   # clear the inner_frame for the purpose of re-rendering everything based on drop_down above
   for widget in inner_frame.winfo_children():
@@ -117,35 +120,29 @@ def inner_frame_render(*args):
   # render certain widgets based on string
   if (query_string == "Title" or query_string == "Author"):   # String-based search
     # variable needed for search logic
-    search_string = StringVar()
-    search_string.set("Enter " + query_string.casefold() + " here")
+    query_str1.set("Enter " + query_string.casefold() + " here")
 
     # search bar creation
-    search = Entry(inner_frame, font=("Arial", 12), justify="center", textvariable=search_string)
+    search = Entry(inner_frame, font=("Arial", 12), justify="center", textvariable=query_str1)
     search.grid(row = 0, column = 1, columnspan = 2)
   elif (query_string == "Release Date" or query_string == "Price"):   # Range-based search
-    # variables needed for search logic
-    lower_bound = StringVar()
-    upper_bound = StringVar()
-
     # depending on query_string, set default text
     if (query_string == "Release Date"):
-      lower_bound.set('1980')
-      upper_bound.set('1990')
+      query_str1.set('1980')
+      query_str2.set('1990')
     else:
-      lower_bound.set('10')
-      upper_bound.set('15')
+      query_str1.set('10')
+      query_str2.set('15')
 
     # search bar creation
     Label(inner_frame, text="to", font=("Arial", 12)).grid(row = 0, column = 1, columnspan = 2, sticky = "NSEW")
-    lower = Entry(inner_frame, font=("Arial", 12), justify="center", textvariable=lower_bound)
+    lower = Entry(inner_frame, font=("Arial", 12), justify="center", textvariable=query_str1)
     lower.grid(row = 0, column = 0, columnspan = 2)
-    upper = Entry(inner_frame, font=("Arial", 12), justify="center", textvariable=upper_bound)
+    upper = Entry(inner_frame, font=("Arial", 12), justify="center", textvariable=query_str2)
     upper.grid(row = 0, column = 2, columnspan = 2)
   else:   # Dropdown-based search
     # variable needed for search logic
-    query_selection = StringVar()
-    query_selection.set('SELECT')
+    query_str1.set('SELECT')
     drop_down_list = []
 
     # depending on query_string, set drop_down_list
@@ -158,7 +155,7 @@ def inner_frame_render(*args):
     
     # dropdown creation
     Label(inner_frame, text="Please select from\n the menu:", font=("Arial", 12)).grid(row = 0, column = 0, columnspan = 2)
-    query_option = OptionMenu(inner_frame, query_selection, *drop_down_list)
+    query_option = OptionMenu(inner_frame, query_str1, *drop_down_list)
     query_option.config(font=("Arial", 12))
     query_option.grid(row = 0, columnspan = 4)
 
@@ -221,7 +218,274 @@ def inner_frame_render(*args):
 # Example: 00001100000, then they want name and notes
 
 def search_button_logic():
-  print (getOutput())
+  # dict of <table name, inclusion flag>. if value is 0, not included in query. included if 1. default to 0
+  flags = {'Books' : 0, 'Publications' : 0, 'Authors' : 0, 'Quality' : 0, 'Prices' : 0, 'Publishers' : 0, 'Languages' : 0}
+
+  bin_str = getOutput()         # checkboxes
+  book_str = bin_str[0:4]       # corresponding to Books table
+  auth_str = bin_str[4:6]       # corresponding to Authors table
+  qua_str = bin_str[6:8]        # corresponding to Quality table
+  query_str = 'SELECT '         # SQL string to generate for usage in DB
+  query_type_str = ''           # for checking actual query
+  results_list = []             # container of columns to return for SELECT clause
+  tables_list = []              # container of tables to query on for FROM clause
+  where_list = []               # container of conditionals for WHERE clause
+  
+  # include table corresponding to query selection
+  dd_var = drop_down_var.get()
+  # query by book title, searches by substring
+  if dd_var == 'Title':
+    flags['Books'] = 1
+
+    if 'Books b' not in tables_list:
+      tables_list.append('Books b')
+    
+    query_type_str += 'b.Title LIKE \'%'
+    query_type_str += query_str1.get()
+    query_type_str += '%\''
+    where_list.append(query_type_str)
+  # query by release year
+  elif dd_var == 'Release Date':
+    flags['Books'] = 1
+
+    if 'Books b' not in tables_list:
+      tables_list.append('Books b')
+    
+    # equal but neither empty OR second is empty, use single value
+    if (query_str1.get() == query_str2.get() and query_str1.get() != '' and query_str2.get() != '') or (query_str1.get() != '' and query_str2.get() == ''):
+      query_type_str += 'b.Date = '
+      query_type_str += query_str1.get()
+      where_list.append(query_type_str)
+    # first is empty, use single value
+    elif query_str1.get() == '' and query_str2.get() != '':
+      query_type_str += 'b.Date = '
+      query_type_str += query_str2.get()
+      where_list.append(query_type_str)
+    # both empty, default to 0 (should return nothing from the db)
+    elif query_str1.get() == '' and query_str2.get() == '':
+      query_type_str += 'b.Date = 0'
+      where_list.append(query_type_str)
+    # neither empty
+    else:
+      query_type_str += 'b.Date > '
+      query_type_str += query_str1.get()
+      query_type_str += '\n\tb.Date < '
+      query_type_str += query_str2.get()
+      where_list.append(query_type_str)
+  # query by author name/names, searches by substring
+  elif dd_var == 'Author':
+    flags['Authors'] = 1
+
+    if 'Authors a' not in tables_list:
+      tables_list.append('Authors a')
+    
+    query_type_str += 'a.Name LIKE \'%'
+    query_type_str += query_str1.get()
+    query_type_str += '%\''
+    where_list.append(query_type_str)
+  # query by type of binding of the book
+  elif dd_var == 'Binding':
+    flags['Quality'] = 1
+
+    if 'Quality q' not in tables_list:
+      tables_list.append('Quality q')
+    
+    query_type_str += 'q.Binding = \''
+    query_type_str += query_str1.get()
+    query_type_str += '\''
+    where_list.append(query_type_str)
+  # query by the condition the book is in
+  elif dd_var == 'Grade':
+    flags['Quality'] = 1
+
+    if 'Quality q' not in tables_list:
+      tables_list.append('Quality q')
+    
+    query_type_str += 'q.Grade = \''
+    query_type_str += query_str1.get()
+    query_type_str += '\''
+    where_list.append(query_type_str)
+  # query by language of the book, one at a time
+  elif dd_var == 'Language':
+    flags['Languages'] = 1
+
+    if 'Languages L' not in tables_list:
+      tables_list.append('Languages L')
+    
+    query_type_str += 'L.Language = \''
+    query_type_str += query_str1.get()
+    query_type_str += '\''
+    where_list.append(query_type_str)
+  # query by book price
+  elif dd_var == 'Price':
+    flags['Prices'] = 1
+
+    if 'Prices pr' not in tables_list:
+      tables_list.append('Prices pr')
+    
+    # equal but neither empty OR second is empty, use single value
+    if (query_str1.get() == query_str2.get() and query_str1.get() != '' and query_str2.get() != '') or (query_str1.get() != '' and query_str2.get() == ''):
+      query_type_str += 'pr.Price = '
+      query_type_str += query_str1.get()
+      where_list.append(query_type_str)
+    # first is empty, use single value
+    elif query_str1.get() == '' and query_str2.get() != '':
+      query_type_str += 'pr.Price = '
+      query_type_str += query_str2.get()
+      where_list.append(query_type_str)
+    # both empty, default to 0 (should return nothing from the db)
+    elif query_str1.get() == '' and query_str2.get() == '':
+      query_type_str += 'pr.Price = 0'
+      where_list.append(query_type_str)
+    # neither empty
+    else:
+      query_type_str += 'pr.Price > '
+      query_type_str += query_str1.get()
+      query_type_str += '\n\tpr.Price < '
+      query_type_str += query_str2.get()
+      where_list.append(query_type_str)
+  
+  # check each bit in binary string to determine which results to include
+  # if the corresponding table is not already greenlit, greenlight it
+  
+  # Book
+
+  # "Title" checked
+  if bin_str[0] == '1':
+    flags['Books'] = 1
+    results_list.append('b.Title')
+
+    if 'Books b' not in tables_list:
+      tables_list.append('Books b')
+  
+  # "Date" checked
+  if bin_str[1] == '1':
+    flags['Books'] = 1
+    results_list.append('b.Date')
+
+    if 'Books b' not in tables_list:
+      tables_list.append('Books b')
+  
+  # "Synopsis" checked
+  if bin_str[2] == '1':
+    flags['Books'] = 1
+    results_list.append('b.Synopsis')
+
+    if 'Books b' not in tables_list:
+      tables_list.append('Books b')
+
+  # "Origin" checked
+  if bin_str[3] == '1':
+    flags['Books'] = 1
+    results_list.append('b.Location_of_Origin')
+
+    if 'Books b' not in tables_list:
+      tables_list.append('Books b')
+
+  # Author
+
+  # "Name" checked
+  if bin_str[4] == '1':
+    flags['Authors'] = 1
+    results_list.append('a.Name')
+
+    if 'Authors a' not in tables_list:
+      tables_list.append('Authors a')
+
+  # "Notes" checked
+  if bin_str[5] == '1':
+    flags['Authors'] = 1
+    results_list.append('a.Notes')
+    
+    if 'Authors a' not in tables_list:
+      tables_list.append('Authors a')
+
+  # Condition
+
+  # "Binding" checked
+  if bin_str[6] == '1':
+    flags['Quality'] = 1
+    results_list.append('q.Binding')
+
+    if 'Quality q' not in tables_list:
+      tables_list.append('Quality q')
+  
+  # "Grade" checked
+  if bin_str[7] == '1':
+    flags['Quality'] = 1
+    results_list.append('q.Grade')
+
+    if 'Quality q' not in tables_list:
+      tables_list.append('Quality q')
+
+  # Other
+
+  # "Price" checked
+  if bin_str[8] == '1':
+    flags['Prices'] = 1
+    results_list.append('pr.Price')
+
+    if 'Prices pr' not in tables_list:
+      tables_list.append('Prices pr')
+  
+  # "Publisher" checked
+  if bin_str[9] == '1':
+    flags['Publishers'] = 1
+    results_list.append('pu.Publisher')
+
+    if 'Publishers pu' not in tables_list:
+      tables_list.append('Publishers pu')
+  
+  # "Language" checked
+  if bin_str[10] == '1':
+    flags['Languages'] = 1
+    results_list.append('L.Language')
+
+    if 'Languages L' not in tables_list:
+      tables_list.append('Languages L')
+  
+  # if Authors table and any other table are greenlit, greenlight Publications
+  if flags['Authors'] and (flags['Books'] or flags['Quality'] or flags['Prices'] or flags['Publishers'] or flags['Languages']):
+    flags['Publications'] = 1
+    tables_list.append('Publications pn')
+    where_list.append('b.ID = pn.Book_ID')
+    where_list.append('a.ID = pn.Author_ID')
+  
+  # check possible joins
+  if flags['Books'] and flags['Quality']:
+    where_list.append('b.ID = q.Book_ID')
+  
+  if flags['Books'] and flags['Prices']:
+    where_list.append('b.ID = pr.Book_ID')
+  
+  if flags['Books'] and flags['Publishers']:
+    where_list.append('b.ID = pu.Book_ID')
+
+  if flags['Books'] and flags['Languages']:
+    where_list.append('b.ID = L.Book_ID')
+  
+  # SELECT clause
+  for i in range(0,len(results_list)):
+    query_str += results_list[i]
+
+    if i < (len(results_list) - 1):
+      query_str += ', '
+  
+  # FROM clause
+  query_str += '\nFROM '
+  for i in range(0,len(tables_list)):
+    query_str += tables_list[i]
+
+    if i < (len(tables_list) - 1):
+      query_str += ', '
+  
+  # WHERE clause
+  query_str += '\nWHERE '
+  for i in range(0,len(where_list)):
+    query_str += where_list[i]
+
+    if i < (len(where_list) - 1):
+      query_str += ',\n\t'
 
 # Get string from checkboxes
 def getOutput():
