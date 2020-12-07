@@ -122,7 +122,7 @@ def inner_frame_render(*args):
 
     # search bar creation
     search = Entry(inner_frame, font=("Arial", 12), justify="center", textvariable=search_string)
-    search.grid(row = 0, columnspan = 4)
+    search.grid(row = 0, column = 1, columnspan = 2)
   elif (query_string == "Release Date" or query_string == "Price"):   # Range-based search
     # variables needed for search logic
     lower_bound = StringVar()
@@ -139,9 +139,9 @@ def inner_frame_render(*args):
     # search bar creation
     Label(inner_frame, text="to", font=("Arial", 12)).grid(row = 0, column = 1, columnspan = 2, sticky = "NSEW")
     lower = Entry(inner_frame, font=("Arial", 12), justify="center", textvariable=lower_bound)
-    lower.grid(row = 0, column = 1)
+    lower.grid(row = 0, column = 0, columnspan = 2)
     upper = Entry(inner_frame, font=("Arial", 12), justify="center", textvariable=upper_bound)
-    upper.grid(row = 0, column = 2)
+    upper.grid(row = 0, column = 2, columnspan = 2)
   else:   # Dropdown-based search
     # variable needed for search logic
     query_selection = StringVar()
@@ -154,10 +154,10 @@ def inner_frame_render(*args):
     elif (query_string == "Grade"):
       drop_down_list = ['new', 'fine / like new', 'near fine', 'good', 'fair', 'poor', 'reading copy only', 'no data']
     else: # query_string == "Language"
-      drop_down_list = ['English']
+      drop_down_list = ['Danish', 'Dutch', 'English', 'English', 'Finish', 'French', 'German', 'Hindi', "Italian", 'Japanese', 'Mandarin', 'Nepali', 'Polish', "Portuguese", 'Romanian', 'Russian', 'Spanish', 'Swedish', 'Turkish']
     
     # dropdown creation
-    Label(inner_frame, text="Please select one from the menu:", font=("Arial", 12)).grid(row = 0, column = 0, columnspan = 2)
+    Label(inner_frame, text="Please select from\n the menu:", font=("Arial", 12)).grid(row = 0, column = 0, columnspan = 2)
     query_option = OptionMenu(inner_frame, query_selection, *drop_down_list)
     query_option.config(font=("Arial", 12))
     query_option.grid(row = 0, columnspan = 4)
