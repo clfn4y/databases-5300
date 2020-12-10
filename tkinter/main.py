@@ -88,7 +88,6 @@ inner_frame.grid_columnconfigure(3, weight=1)
 # checkbox variables for output selection
 book_title = IntVar()
 book_date = IntVar()
-book_synopsis = IntVar()
 book_origin = IntVar()
 authors_name = IntVar()
 authors_notes = IntVar()
@@ -205,8 +204,8 @@ def inner_frame_render(*args):
   Button(inner_frame, text='Search', command=search_button_logic).grid(row=4, column=3)
 
 #         Book                  Authors       Conditions           Other
-# Title Date Synopsis Origin | Name Notes | Binding Grade | Price Publisher Language
-# 0     0    0        0        0    0       0       0       0     0         0
+# Title Date Origin | Name Notes | Binding Grade | Price Publisher Language
+# 0     0    0        0    0       0       0       0     0         0
 # 11 bits
 # Example: 00001100000, then they want name and notes
 
@@ -509,7 +508,7 @@ def search_button_logic():
 
 # Get string from checkboxes
 def getOutput():
-  output_string = str(book_title.get()) + str(book_date.get()) + str(book_synopsis.get()) + str(book_origin.get()) + str(authors_name.get()) + str(authors_notes.get()) + str(conditions_binding.get()) + str(conditions_grade.get()) + str(other_price.get()) + str(other_publisher.get()) + str(other_language.get())
+  output_string = str(book_title.get()) + str(book_date.get()) + str(book_origin.get()) + str(authors_name.get()) + str(authors_notes.get()) + str(conditions_binding.get()) + str(conditions_grade.get()) + str(other_price.get()) + str(other_publisher.get()) + str(other_language.get())
   return output_string
 
 
