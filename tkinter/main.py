@@ -77,8 +77,7 @@ inner_frame.grid_rowconfigure(2, weight=1)    # rows containing the checkboxes (
 inner_frame.grid_rowconfigure(3, weight=1)
 inner_frame.grid_rowconfigure(4, weight=1)
 inner_frame.grid_rowconfigure(5, weight=1)
-inner_frame.grid_rowconfigure(6, weight=1)
-inner_frame.grid_rowconfigure(7, weight=80)   # row containing the output
+inner_frame.grid_rowconfigure(6, weight=80)   # row containing the output
 
 # inner_frame column configuration
 inner_frame.grid_columnconfigure(0, weight=1) # columns containing the checkboxes (5 row x 4 column grid)
@@ -98,8 +97,6 @@ conditions_grade = IntVar()
 other_price = IntVar()
 other_publisher = IntVar()
 other_language = IntVar()
-
-# Button(inner_frame, text='Quit', command=inner_frame.quit).grid(row=6, sticky=W, pady=4)
 
 query_str1 = StringVar()
 query_str2 = StringVar()
@@ -176,11 +173,8 @@ def inner_frame_render(*args):
   date_check = Checkbutton(inner_frame, text="Date", font=("Arial", 10), variable=book_date)
   date_check.grid(row=4, column=0, sticky="W")
 
-  synopsis_check = Checkbutton(inner_frame, text="Synopsis", font=("Arial", 10), variable=book_synopsis)
-  synopsis_check.grid(row=5, column=0, sticky="W")
-
   origin_check = Checkbutton(inner_frame, text="Origin", font=("Arial", 10), variable=book_origin)
-  origin_check.grid(row=6, column=0, sticky="W")
+  origin_check.grid(row=5, column=0, sticky="W")
 
   # AUTHOR SECTION
   name_check = Checkbutton(inner_frame, text="Name", font=("Arial", 10), variable=authors_name)
@@ -268,7 +262,11 @@ def search_button_logic():
     else:
       query_type_str += 'b.Release_Date > '
       query_type_str += query_str1.get()
+<<<<<<< HEAD
       query_type_str += '\n\tAND b.Release_Date < '
+=======
+      query_type_str += '\n\tAND b.Date < '
+>>>>>>> dc4a2efb77a7d4d65d90eade12096184a0baba54
       query_type_str += query_str2.get()
       where_list.append(query_type_str)
   # query by author name/names, searches by substring
@@ -447,8 +445,13 @@ def search_button_logic():
   if flags['Authors'] and (flags['Books'] or flags['Quality'] or flags['Prices'] or flags['Publishers'] or flags['Languages']):
     flags['Publications'] = 1
     tables_list.append('mdmfvz.Publications pn')
+<<<<<<< HEAD
     where_list.append('b.Book_ID = pn.Book_ID')
     where_list.append('a.Author_ID = pn.Author_ID')
+=======
+    where_list.append('b.ID = pn.Book_ID')
+    where_list.append('a.ID = pn.Author_ID')
+>>>>>>> dc4a2efb77a7d4d65d90eade12096184a0baba54
   
   # check possible joins
   if flags['Books'] and flags['Quality']:
@@ -485,6 +488,7 @@ def search_button_logic():
 
     if i < (len(where_list) - 1):
       query_str += '\n\tAND '
+<<<<<<< HEAD
 
   curr.execute(query_str)
 
@@ -500,6 +504,8 @@ def search_button_logic():
 
   
 
+=======
+>>>>>>> dc4a2efb77a7d4d65d90eade12096184a0baba54
 
 # Get string from checkboxes
 def getOutput():
