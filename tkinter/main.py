@@ -78,8 +78,7 @@ inner_frame.grid_rowconfigure(3, weight=1)
 inner_frame.grid_rowconfigure(4, weight=1)
 inner_frame.grid_rowconfigure(5, weight=1)
 inner_frame.grid_rowconfigure(6, weight=1)
-inner_frame.grid_rowconfigure(7, weight=1)    # Search Button
-inner_frame.grid_rowconfigure(8, weight=80)   # row containing the output
+inner_frame.grid_rowconfigure(7, weight=80)   # row containing the output
 
 # inner_frame column configuration
 inner_frame.grid_columnconfigure(0, weight=1) # columns containing the checkboxes (5 row x 4 column grid)
@@ -163,53 +162,53 @@ def inner_frame_render(*args):
   Label(inner_frame, text="Output Selection:", font=("Arial", 15)).grid(row=1, column=1, columnspan=2, sticky="N")
 
   # Section labels
-  Label(inner_frame, text="Book:", font=("Arial", 12)).grid(row=2, column=0)
-  Label(inner_frame, text="Author:", font=("Arial", 12)).grid(row=2, column=1)
-  Label(inner_frame, text="Condition:", font=("Arial", 12)).grid(row=2, column=2)
-  Label(inner_frame, text="Other:", font=("Arial", 12)).grid(row=2, column=3)
+  Label(inner_frame, text="Book:", font=("Arial", 12)).grid(row=2, column=0, sticky="W")
+  Label(inner_frame, text="Author:", font=("Arial", 12)).grid(row=2, column=1, sticky="W")
+  Label(inner_frame, text="Condition:", font=("Arial", 12)).grid(row=2, column=2, sticky="W")
+  Label(inner_frame, text="Other:", font=("Arial", 12)).grid(row=2, column=3, sticky="W")
 
   # checkbuttons for output selection
   # BOOK SECTION
   title_check = Checkbutton(inner_frame, text="Title", font=("Arial", 10), variable=book_title)
-  title_check.grid(row=3, column=0)
+  title_check.grid(row=3, column=0, sticky="W")
   title_check.select()  # select book_title by default
 
   date_check = Checkbutton(inner_frame, text="Date", font=("Arial", 10), variable=book_date)
-  date_check.grid(row=4, column=0)
+  date_check.grid(row=4, column=0, sticky="W")
 
   synopsis_check = Checkbutton(inner_frame, text="Synopsis", font=("Arial", 10), variable=book_synopsis)
-  synopsis_check.grid(row=5, column=0)
+  synopsis_check.grid(row=5, column=0, sticky="W")
 
   origin_check = Checkbutton(inner_frame, text="Origin", font=("Arial", 10), variable=book_origin)
-  origin_check.grid(row=6, column=0)
+  origin_check.grid(row=6, column=0, sticky="W")
 
   # AUTHOR SECTION
   name_check = Checkbutton(inner_frame, text="Name", font=("Arial", 10), variable=authors_name)
-  name_check.grid(row=3, column=1)
+  name_check.grid(row=3, column=1, sticky="W")
   name_check.select()   # select author_name by default
 
   notes_check = Checkbutton(inner_frame, text="Notes", font=("Arial", 10), variable=authors_notes)
-  notes_check.grid(row=4, column=1)
+  notes_check.grid(row=4, column=1, sticky="W")
 
   # CONDITION SECTION
   binding_check = Checkbutton(inner_frame, text="Binding", font=("Arial", 10), variable=conditions_binding)
-  binding_check.grid(row=3, column=2)
+  binding_check.grid(row=3, column=2, sticky="W")
 
   grade_check = Checkbutton(inner_frame, text="Grade", font=("Arial", 10), variable=conditions_grade)
-  grade_check.grid(row=4, column=2)
+  grade_check.grid(row=4, column=2, sticky="W")
 
   # OTHER SECTION
   price_check = Checkbutton(inner_frame, text="Price", font=("Arial", 10), variable=other_price)
-  price_check.grid(row=3, column=3)
+  price_check.grid(row=3, column=3, sticky="W")
 
   publisher_check = Checkbutton(inner_frame, text="Publisher", font=("Arial", 10), variable=other_publisher)
-  publisher_check.grid(row=4, column=3)
+  publisher_check.grid(row=4, column=3, sticky="W")
 
   language_check = Checkbutton(inner_frame, text="Language", font=("Arial", 10), variable=other_language)
-  language_check.grid(row=5, column=3)
+  language_check.grid(row=5, column=3, sticky="W")
   
   # search button that executes querying logic
-  Button(inner_frame, text='Search', command=search_button_logic).grid(row=7, column=1, sticky="N",columnspan=2)
+  Button(inner_frame, text='Search', command=search_button_logic).grid(row=4, column=3)
 
 #         Book                  Authors       Conditions           Other
 # Title Date Synopsis Origin | Name Notes | Binding Grade | Price Publisher Language
