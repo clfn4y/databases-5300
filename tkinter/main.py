@@ -237,7 +237,7 @@ def search_button_logic():
     flags['Books'] = 1
 
     if 'Books b' not in tables_list:
-      tables_list.append('Books b')
+      tables_list.append('mdmfvz.Books b')
     
     query_type_str += 'b.Title LIKE \'%'
     query_type_str += query_str1.get()
@@ -248,7 +248,7 @@ def search_button_logic():
     flags['Books'] = 1
 
     if 'Books b' not in tables_list:
-      tables_list.append('Books b')
+      tables_list.append('mdmfvz.Books b')
     
     # equal but neither empty OR second is empty, use single value
     if (query_str1.get() == query_str2.get() and query_str1.get() != '' and query_str2.get() != '') or (query_str1.get() != '' and query_str2.get() == ''):
@@ -276,7 +276,7 @@ def search_button_logic():
     flags['Authors'] = 1
 
     if 'Authors a' not in tables_list:
-      tables_list.append('Authors a')
+      tables_list.append('mdmfvz.Authors a')
     
     query_type_str += 'a.Name LIKE \'%'
     query_type_str += query_str1.get()
@@ -287,7 +287,7 @@ def search_button_logic():
     flags['Quality'] = 1
 
     if 'Quality q' not in tables_list:
-      tables_list.append('Quality q')
+      tables_list.append('mdmfvz.Quality q')
     
     query_type_str += 'q.Binding = \''
     query_type_str += query_str1.get()
@@ -298,7 +298,7 @@ def search_button_logic():
     flags['Quality'] = 1
 
     if 'Quality q' not in tables_list:
-      tables_list.append('Quality q')
+      tables_list.append('mdmfvz.Quality q')
     
     query_type_str += 'q.Grade = \''
     query_type_str += query_str1.get()
@@ -309,7 +309,7 @@ def search_button_logic():
     flags['Languages'] = 1
 
     if 'Languages L' not in tables_list:
-      tables_list.append('Languages L')
+      tables_list.append('mdmfvz.Languages L')
     
     query_type_str += 'L.Language = \''
     query_type_str += query_str1.get()
@@ -320,7 +320,7 @@ def search_button_logic():
     flags['Prices'] = 1
 
     if 'Prices pr' not in tables_list:
-      tables_list.append('Prices pr')
+      tables_list.append('mdmfvz.Prices pr')
     
     # equal but neither empty OR second is empty, use single value
     if (query_str1.get() == query_str2.get() and query_str1.get() != '' and query_str2.get() != '') or (query_str1.get() != '' and query_str2.get() == ''):
@@ -355,7 +355,7 @@ def search_button_logic():
     results_list.append('b.Title')
 
     if 'Books b' not in tables_list:
-      tables_list.append('Books b')
+      tables_list.append('mdmfvz.Books b')
   
   # "Date" checked
   if bin_str[1] == '1':
@@ -363,7 +363,7 @@ def search_button_logic():
     results_list.append('b.Date')
 
     if 'Books b' not in tables_list:
-      tables_list.append('Books b')
+      tables_list.append('mdmfvz.Books b')
   
   # "Synopsis" checked
   if bin_str[2] == '1':
@@ -371,7 +371,7 @@ def search_button_logic():
     results_list.append('b.Synopsis')
 
     if 'Books b' not in tables_list:
-      tables_list.append('Books b')
+      tables_list.append('mdmfvz.Books b')
 
   # "Origin" checked
   if bin_str[3] == '1':
@@ -379,7 +379,7 @@ def search_button_logic():
     results_list.append('b.Location_of_Origin')
 
     if 'Books b' not in tables_list:
-      tables_list.append('Books b')
+      tables_list.append('mdmfvz.Books b')
 
   # Author
 
@@ -389,7 +389,7 @@ def search_button_logic():
     results_list.append('a.Name')
 
     if 'Authors a' not in tables_list:
-      tables_list.append('Authors a')
+      tables_list.append('mdmfvz.Authors a')
 
   # "Notes" checked
   if bin_str[5] == '1':
@@ -397,7 +397,7 @@ def search_button_logic():
     results_list.append('a.Notes')
     
     if 'Authors a' not in tables_list:
-      tables_list.append('Authors a')
+      tables_list.append('mdmfvz.Authors a')
 
   # Condition
 
@@ -407,7 +407,7 @@ def search_button_logic():
     results_list.append('q.Binding')
 
     if 'Quality q' not in tables_list:
-      tables_list.append('Quality q')
+      tables_list.append('mdmfvz.Quality q')
   
   # "Grade" checked
   if bin_str[7] == '1':
@@ -415,7 +415,7 @@ def search_button_logic():
     results_list.append('q.Grade')
 
     if 'Quality q' not in tables_list:
-      tables_list.append('Quality q')
+      tables_list.append('mdmfvz.Quality q')
 
   # Other
 
@@ -425,7 +425,7 @@ def search_button_logic():
     results_list.append('pr.Price')
 
     if 'Prices pr' not in tables_list:
-      tables_list.append('Prices pr')
+      tables_list.append('mdmfvz.Prices pr')
   
   # "Publisher" checked
   if bin_str[9] == '1':
@@ -433,7 +433,7 @@ def search_button_logic():
     results_list.append('pu.Publisher')
 
     if 'Publishers pu' not in tables_list:
-      tables_list.append('Publishers pu')
+      tables_list.append('mdmfvz.Publishers pu')
   
   # "Language" checked
   if bin_str[10] == '1':
@@ -441,12 +441,12 @@ def search_button_logic():
     results_list.append('L.Language')
 
     if 'Languages L' not in tables_list:
-      tables_list.append('Languages L')
+      tables_list.append('mdmfvz.Languages L')
   
   # if Authors table and any other table are greenlit, greenlight Publications
   if flags['Authors'] and (flags['Books'] or flags['Quality'] or flags['Prices'] or flags['Publishers'] or flags['Languages']):
     flags['Publications'] = 1
-    tables_list.append('Publications pn')
+    tables_list.append('mdmfvz.Publications pn')
     where_list.append('b.ID = pn.Book_ID')
     where_list.append('a.ID = pn.Author_ID')
   
@@ -485,6 +485,8 @@ def search_button_logic():
 
     if i < (len(where_list) - 1):
       query_str += '\n\tAND '
+  
+  print (query_str)
 
 # Get string from checkboxes
 def getOutput():
