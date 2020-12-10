@@ -206,7 +206,7 @@ def inner_frame_render(*args):
 #         Book                  Authors       Conditions           Other
 # Title Date Origin | Name Notes | Binding Grade | Price Publisher Language
 # 0     0    0        0    0       0       0       0     0         0
-# 11 bits
+# 10 bits
 # Example: 00001100000, then they want name and notes
 
 def search_button_logic():
@@ -357,17 +357,9 @@ def search_button_logic():
 
     if 'mdmfvz.Books b' not in tables_list:
       tables_list.append('mdmfvz.Books b')
-  
-  # "Synopsis" checked
-  if bin_str[2] == '1':
-    flags['Books'] = 1
-    results_list.append('b.Synopsis')
-
-    if 'mdmfvz.Books b' not in tables_list:
-      tables_list.append('mdmfvz.Books b')
 
   # "Origin" checked
-  if bin_str[3] == '1':
+  if bin_str[2] == '1':
     flags['Books'] = 1
     results_list.append('b.Location_of_Origin')
 
@@ -377,7 +369,7 @@ def search_button_logic():
   # Author
 
   # "Name" checked
-  if bin_str[4] == '1':
+  if bin_str[3] == '1':
     flags['Authors'] = 1
     results_list.append('a.Name')
 
@@ -385,7 +377,7 @@ def search_button_logic():
       tables_list.append('mdmfvz.Authors a')
 
   # "Notes" checked
-  if bin_str[5] == '1':
+  if bin_str[4] == '1':
     flags['Authors'] = 1
     results_list.append('a.Notes')
     
@@ -395,7 +387,7 @@ def search_button_logic():
   # Condition
 
   # "Binding" checked
-  if bin_str[6] == '1':
+  if bin_str[5] == '1':
     flags['Quality'] = 1
     results_list.append('q.Binding')
 
@@ -403,7 +395,7 @@ def search_button_logic():
       tables_list.append('mdmfvz.Quality q')
   
   # "Grade" checked
-  if bin_str[7] == '1':
+  if bin_str[6] == '1':
     flags['Quality'] = 1
     results_list.append('q.Grade')
 
@@ -413,7 +405,7 @@ def search_button_logic():
   # Other
 
   # "Price" checked
-  if bin_str[8] == '1':
+  if bin_str[7] == '1':
     flags['Prices'] = 1
     results_list.append('pr.Price')
 
@@ -421,7 +413,7 @@ def search_button_logic():
       tables_list.append('mdmfvz.Prices pr')
   
   # "Publisher" checked
-  if bin_str[9] == '1':
+  if bin_str[8] == '1':
     flags['Publishers'] = 1
     results_list.append('pu.Publisher')
 
@@ -429,7 +421,7 @@ def search_button_logic():
       tables_list.append('mdmfvz.Publishers pu')
   
   # "Language" checked
-  if bin_str[10] == '1':
+  if bin_str[9] == '1':
     flags['Languages'] = 1
     results_list.append('L.Language')
 
