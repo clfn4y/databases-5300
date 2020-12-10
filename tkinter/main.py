@@ -1,30 +1,30 @@
 from tkinter import *
-#import mariadb
+import mariadb
 import sys
 
 
-# def database_connection():
-  # try:
-  #   connection = mariadb.connect(
-  #     user="mdmfvz",
-  #     password="my2BOYZ!",
-  #     host="cs-class-db.srv.mst.edu",
-  #     port=3306,
-  #     database="mdmfvz"
-  #   )
+def database_connection():
+  try:
+    connection = mariadb.connect(
+      user="mdmfvz",
+      password="my2BOYZ!",
+      host="cs-class-db.srv.mst.edu",
+      port=3306,
+      database="mdmfvz"
+    )
 
-  # except mariadb.Error as e:
-  #   print(f"Error connecting to MariaDB Platform: {e}")
-  #   sys.exit(1)
+  except mariadb.Error as e:
+    print(f"Error connecting to MariaDB Platform: {e}")
+    sys.exit(1)
 
-  # return connection
+  return connection
 
-#conn = database_connection()
-#curr = conn.cursor()
+conn = database_connection()
+curr = conn.cursor()
 
 #curr.execute(SQL_statement)
 #conn.commit()
-#conn.close()
+
 
 
 #tkinter setup
@@ -236,8 +236,8 @@ def search_button_logic():
   if dd_var == 'Title':
     flags['Books'] = 1
 
-    if 'Books b' not in tables_list:
-      tables_list.append('Books b')
+    if 'mdmfvz.Books b' not in tables_list:
+      tables_list.append('mdmfvz.Books b')
     
     query_type_str += 'b.Title LIKE \'%'
     query_type_str += query_str1.get()
@@ -247,36 +247,36 @@ def search_button_logic():
   elif dd_var == 'Release Date':
     flags['Books'] = 1
 
-    if 'Books b' not in tables_list:
-      tables_list.append('Books b')
+    if 'mdmfvz.Books b' not in tables_list:
+      tables_list.append('mdmfvz.Books b')
     
     # equal but neither empty OR second is empty, use single value
     if (query_str1.get() == query_str2.get() and query_str1.get() != '' and query_str2.get() != '') or (query_str1.get() != '' and query_str2.get() == ''):
-      query_type_str += 'b.Date = '
+      query_type_str += 'b.Release_Date = '
       query_type_str += query_str1.get()
       where_list.append(query_type_str)
     # first is empty, use single value
     elif query_str1.get() == '' and query_str2.get() != '':
-      query_type_str += 'b.Date = '
+      query_type_str += 'b.Release_Date = '
       query_type_str += query_str2.get()
       where_list.append(query_type_str)
     # both empty, default to 0 (should return nothing from the db)
     elif query_str1.get() == '' and query_str2.get() == '':
-      query_type_str += 'b.Date = 0'
+      query_type_str += 'b.Release_Date = 0'
       where_list.append(query_type_str)
     # neither empty
     else:
-      query_type_str += 'b.Date > '
+      query_type_str += 'b.Release_Date > '
       query_type_str += query_str1.get()
-      query_type_str += '\n\tb.Date < '
+      query_type_str += '\n\tAND b.Release_Date < '
       query_type_str += query_str2.get()
       where_list.append(query_type_str)
   # query by author name/names, searches by substring
   elif dd_var == 'Author':
     flags['Authors'] = 1
 
-    if 'Authors a' not in tables_list:
-      tables_list.append('Authors a')
+    if 'mdmfvz.Authors a' not in tables_list:
+      tables_list.append('mdmfvz.Authors a')
     
     query_type_str += 'a.Name LIKE \'%'
     query_type_str += query_str1.get()
@@ -286,8 +286,8 @@ def search_button_logic():
   elif dd_var == 'Binding':
     flags['Quality'] = 1
 
-    if 'Quality q' not in tables_list:
-      tables_list.append('Quality q')
+    if 'mdmfvz.Quality q' not in tables_list:
+      tables_list.append('mdmfvz.Quality q')
     
     query_type_str += 'q.Binding = \''
     query_type_str += query_str1.get()
@@ -297,8 +297,8 @@ def search_button_logic():
   elif dd_var == 'Grade':
     flags['Quality'] = 1
 
-    if 'Quality q' not in tables_list:
-      tables_list.append('Quality q')
+    if 'mdmfvz.Quality q' not in tables_list:
+      tables_list.append('mdmfvz.Quality q')
     
     query_type_str += 'q.Grade = \''
     query_type_str += query_str1.get()
@@ -308,8 +308,8 @@ def search_button_logic():
   elif dd_var == 'Language':
     flags['Languages'] = 1
 
-    if 'Languages L' not in tables_list:
-      tables_list.append('Languages L')
+    if 'mdmfvz.Languages L' not in tables_list:
+      tables_list.append('mdmfvz.Languages L')
     
     query_type_str += 'L.Language = \''
     query_type_str += query_str1.get()
@@ -319,8 +319,8 @@ def search_button_logic():
   elif dd_var == 'Price':
     flags['Prices'] = 1
 
-    if 'Prices pr' not in tables_list:
-      tables_list.append('Prices pr')
+    if 'mdmfvz.Prices pr' not in tables_list:
+      tables_list.append('mdmfvz.Prices pr')
     
     # equal but neither empty OR second is empty, use single value
     if (query_str1.get() == query_str2.get() and query_str1.get() != '' and query_str2.get() != '') or (query_str1.get() != '' and query_str2.get() == ''):
@@ -340,7 +340,7 @@ def search_button_logic():
     else:
       query_type_str += 'pr.Price > '
       query_type_str += query_str1.get()
-      query_type_str += '\n\tpr.Price < '
+      query_type_str += '\n\tAND pr.Price < '
       query_type_str += query_str2.get()
       where_list.append(query_type_str)
   
@@ -354,32 +354,32 @@ def search_button_logic():
     flags['Books'] = 1
     results_list.append('b.Title')
 
-    if 'Books b' not in tables_list:
-      tables_list.append('Books b')
+    if 'mdmfvz.Books b' not in tables_list:
+      tables_list.append('mdmfvz.Books b')
   
   # "Date" checked
   if bin_str[1] == '1':
     flags['Books'] = 1
-    results_list.append('b.Date')
+    results_list.append('b.Release_Date')
 
-    if 'Books b' not in tables_list:
-      tables_list.append('Books b')
+    if 'mdmfvz.Books b' not in tables_list:
+      tables_list.append('mdmfvz.Books b')
   
   # "Synopsis" checked
   if bin_str[2] == '1':
     flags['Books'] = 1
     results_list.append('b.Synopsis')
 
-    if 'Books b' not in tables_list:
-      tables_list.append('Books b')
+    if 'mdmfvz.Books b' not in tables_list:
+      tables_list.append('mdmfvz.Books b')
 
   # "Origin" checked
   if bin_str[3] == '1':
     flags['Books'] = 1
     results_list.append('b.Location_of_Origin')
 
-    if 'Books b' not in tables_list:
-      tables_list.append('Books b')
+    if 'mdmfvz.Books b' not in tables_list:
+      tables_list.append('mdmfvz.Books b')
 
   # Author
 
@@ -388,16 +388,16 @@ def search_button_logic():
     flags['Authors'] = 1
     results_list.append('a.Name')
 
-    if 'Authors a' not in tables_list:
-      tables_list.append('Authors a')
+    if 'mdmfvz.Authors a' not in tables_list:
+      tables_list.append('mdmfvz.Authors a')
 
   # "Notes" checked
   if bin_str[5] == '1':
     flags['Authors'] = 1
     results_list.append('a.Notes')
     
-    if 'Authors a' not in tables_list:
-      tables_list.append('Authors a')
+    if 'mdmfvz.Authors a' not in tables_list:
+      tables_list.append('mdmfvz.Authors a')
 
   # Condition
 
@@ -406,16 +406,16 @@ def search_button_logic():
     flags['Quality'] = 1
     results_list.append('q.Binding')
 
-    if 'Quality q' not in tables_list:
-      tables_list.append('Quality q')
+    if 'mdmfvz.Quality q' not in tables_list:
+      tables_list.append('mdmfvz.Quality q')
   
   # "Grade" checked
   if bin_str[7] == '1':
     flags['Quality'] = 1
     results_list.append('q.Grade')
 
-    if 'Quality q' not in tables_list:
-      tables_list.append('Quality q')
+    if 'mdmfvz.Quality q' not in tables_list:
+      tables_list.append('mdmfvz.Quality q')
 
   # Other
 
@@ -424,44 +424,44 @@ def search_button_logic():
     flags['Prices'] = 1
     results_list.append('pr.Price')
 
-    if 'Prices pr' not in tables_list:
-      tables_list.append('Prices pr')
+    if 'mdmfvz.Prices pr' not in tables_list:
+      tables_list.append('mdmfvz.Prices pr')
   
   # "Publisher" checked
   if bin_str[9] == '1':
     flags['Publishers'] = 1
     results_list.append('pu.Publisher')
 
-    if 'Publishers pu' not in tables_list:
-      tables_list.append('Publishers pu')
+    if 'mdmfvz.Publishers pu' not in tables_list:
+      tables_list.append('mdmfvz.Publishers pu')
   
   # "Language" checked
   if bin_str[10] == '1':
     flags['Languages'] = 1
     results_list.append('L.Language')
 
-    if 'Languages L' not in tables_list:
-      tables_list.append('Languages L')
+    if 'mdmfvz.Languages L' not in tables_list:
+      tables_list.append('mdmfvz.Languages L')
   
   # if Authors table and any other table are greenlit, greenlight Publications
   if flags['Authors'] and (flags['Books'] or flags['Quality'] or flags['Prices'] or flags['Publishers'] or flags['Languages']):
     flags['Publications'] = 1
-    tables_list.append('Publications pn')
-    where_list.append('b.ID = pn.Book_ID')
-    where_list.append('a.ID = pn.Author_ID')
+    tables_list.append('mdmfvz.Publications pn')
+    where_list.append('b.Book_ID = pn.Book_ID')
+    where_list.append('a.Author_ID = pn.Author_ID')
   
   # check possible joins
   if flags['Books'] and flags['Quality']:
-    where_list.append('b.ID = q.Book_ID')
+    where_list.append('b.Book_ID = q.Book_ID')
   
   if flags['Books'] and flags['Prices']:
-    where_list.append('b.ID = pr.Book_ID')
+    where_list.append('b.Book_ID = pr.Book_ID')
   
   if flags['Books'] and flags['Publishers']:
-    where_list.append('b.ID = pu.Book_ID')
+    where_list.append('b.Book_ID = pu.Book_ID')
 
   if flags['Books'] and flags['Languages']:
-    where_list.append('b.ID = L.Book_ID')
+    where_list.append('b.Book_ID = L.Book_ID')
   
   # SELECT clause
   for i in range(0,len(results_list)):
@@ -484,7 +484,22 @@ def search_button_logic():
     query_str += where_list[i]
 
     if i < (len(where_list) - 1):
-      query_str += ',\n\t'
+      query_str += '\n\tAND '
+
+  curr.execute(query_str)
+
+  results = []
+  for i in curr:
+    results.append(i)
+
+  print(results)
+
+  
+
+
+
+  
+
 
 # Get string from checkboxes
 def getOutput():
@@ -493,10 +508,9 @@ def getOutput():
 
 
 
-
-
-
 # Trace the drop down menu for changes, call inner_frame render when changed
 drop_down_var.trace("w", inner_frame_render)
 
 root.mainloop()
+
+conn.close()
