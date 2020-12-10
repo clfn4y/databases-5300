@@ -77,8 +77,7 @@ inner_frame.grid_rowconfigure(2, weight=1)    # rows containing the checkboxes (
 inner_frame.grid_rowconfigure(3, weight=1)
 inner_frame.grid_rowconfigure(4, weight=1)
 inner_frame.grid_rowconfigure(5, weight=1)
-inner_frame.grid_rowconfigure(6, weight=1)
-inner_frame.grid_rowconfigure(7, weight=80)   # row containing the output
+inner_frame.grid_rowconfigure(6, weight=80)   # row containing the output
 
 # inner_frame column configuration
 inner_frame.grid_columnconfigure(0, weight=1) # columns containing the checkboxes (5 row x 4 column grid)
@@ -98,8 +97,6 @@ conditions_grade = IntVar()
 other_price = IntVar()
 other_publisher = IntVar()
 other_language = IntVar()
-
-# Button(inner_frame, text='Quit', command=inner_frame.quit).grid(row=6, sticky=W, pady=4)
 
 query_str1 = StringVar()
 query_str2 = StringVar()
@@ -176,11 +173,8 @@ def inner_frame_render(*args):
   date_check = Checkbutton(inner_frame, text="Date", font=("Arial", 10), variable=book_date)
   date_check.grid(row=4, column=0, sticky="W")
 
-  synopsis_check = Checkbutton(inner_frame, text="Synopsis", font=("Arial", 10), variable=book_synopsis)
-  synopsis_check.grid(row=5, column=0, sticky="W")
-
   origin_check = Checkbutton(inner_frame, text="Origin", font=("Arial", 10), variable=book_origin)
-  origin_check.grid(row=6, column=0, sticky="W")
+  origin_check.grid(row=5, column=0, sticky="W")
 
   # AUTHOR SECTION
   name_check = Checkbutton(inner_frame, text="Name", font=("Arial", 10), variable=authors_name)
