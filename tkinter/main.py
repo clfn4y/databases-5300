@@ -497,12 +497,9 @@ def search_button_logic():
     tree.heading(col, text=col)
   for i in results:
     tree.insert("", "end", values=(i))
-  
-
-
 
   #Kyle-sama plz fix
-  tree.grid(row=6,column=0,columnspan=2)
+  tree.grid(row=6,column=0,columnspan=4,sticky="NSEW")
 
   
 
