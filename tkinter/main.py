@@ -261,11 +261,7 @@ def search_button_logic():
     else:
       query_type_str += 'b.Release_Date > '
       query_type_str += query_str1.get()
-<<<<<<< HEAD
       query_type_str += '\n\tAND b.Release_Date < '
-=======
-      query_type_str += '\n\tAND b.Date < '
->>>>>>> dc4a2efb77a7d4d65d90eade12096184a0baba54
       query_type_str += query_str2.get()
       where_list.append(query_type_str)
   # query by author name/names, searches by substring
@@ -444,13 +440,8 @@ def search_button_logic():
   if flags['Authors'] and (flags['Books'] or flags['Quality'] or flags['Prices'] or flags['Publishers'] or flags['Languages']):
     flags['Publications'] = 1
     tables_list.append('mdmfvz.Publications pn')
-<<<<<<< HEAD
     where_list.append('b.Book_ID = pn.Book_ID')
     where_list.append('a.Author_ID = pn.Author_ID')
-=======
-    where_list.append('b.ID = pn.Book_ID')
-    where_list.append('a.ID = pn.Author_ID')
->>>>>>> dc4a2efb77a7d4d65d90eade12096184a0baba54
   
   # check possible joins
   if flags['Books'] and flags['Quality']:
@@ -487,7 +478,6 @@ def search_button_logic():
 
     if i < (len(where_list) - 1):
       query_str += '\n\tAND '
-<<<<<<< HEAD
 
   curr.execute(query_str)
 
@@ -502,9 +492,6 @@ def search_button_logic():
 
 
   
-
-=======
->>>>>>> dc4a2efb77a7d4d65d90eade12096184a0baba54
 
 # Get string from checkboxes
 def getOutput():
