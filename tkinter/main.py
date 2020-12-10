@@ -268,7 +268,7 @@ def search_button_logic():
     else:
       query_type_str += 'b.Date > '
       query_type_str += query_str1.get()
-      query_type_str += '\n\tb.Date < '
+      query_type_str += '\n\tAND b.Date < '
       query_type_str += query_str2.get()
       where_list.append(query_type_str)
   # query by author name/names, searches by substring
@@ -340,7 +340,7 @@ def search_button_logic():
     else:
       query_type_str += 'pr.Price > '
       query_type_str += query_str1.get()
-      query_type_str += '\n\tpr.Price < '
+      query_type_str += '\n\tAND pr.Price < '
       query_type_str += query_str2.get()
       where_list.append(query_type_str)
   
@@ -484,7 +484,7 @@ def search_button_logic():
     query_str += where_list[i]
 
     if i < (len(where_list) - 1):
-      query_str += ',\n\t'
+      query_str += '\n\tAND '
 
 # Get string from checkboxes
 def getOutput():
