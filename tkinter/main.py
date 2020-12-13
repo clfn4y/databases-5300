@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import ttk
 import mariadb
 import sys
 
@@ -99,6 +100,7 @@ other_language = IntVar()
 
 query_str1 = StringVar()
 query_str2 = StringVar()
+
 
 def inner_frame_render(*args):
   # clear the inner_frame for the purpose of re-rendering everything based on drop_down above
@@ -342,10 +344,13 @@ def search_button_logic():
   
   # Book
 
+  labels = []
+
   # "Title" checked
   if bin_str[0] == '1':
     flags['Books'] = 1
     results_list.append('b.Title')
+    labels.append("Title")
 
     if 'mdmfvz.Books b' not in tables_list:
       tables_list.append('mdmfvz.Books b')
@@ -354,6 +359,7 @@ def search_button_logic():
   if bin_str[1] == '1':
     flags['Books'] = 1
     results_list.append('b.Release_Date')
+    labels.append("Date")
 
     if 'mdmfvz.Books b' not in tables_list:
       tables_list.append('mdmfvz.Books b')
@@ -362,6 +368,7 @@ def search_button_logic():
   if bin_str[2] == '1':
     flags['Books'] = 1
     results_list.append('b.Location_of_Origin')
+    labels.append("Origin")
 
     if 'mdmfvz.Books b' not in tables_list:
       tables_list.append('mdmfvz.Books b')
@@ -372,6 +379,7 @@ def search_button_logic():
   if bin_str[3] == '1':
     flags['Authors'] = 1
     results_list.append('a.Name')
+    labels.append("Author")
 
     if 'mdmfvz.Authors a' not in tables_list:
       tables_list.append('mdmfvz.Authors a')
@@ -380,6 +388,7 @@ def search_button_logic():
   if bin_str[4] == '1':
     flags['Authors'] = 1
     results_list.append('a.Notes')
+    labels.append("Notes")
     
     if 'mdmfvz.Authors a' not in tables_list:
       tables_list.append('mdmfvz.Authors a')
@@ -390,6 +399,7 @@ def search_button_logic():
   if bin_str[5] == '1':
     flags['Quality'] = 1
     results_list.append('q.Binding')
+    labels.append("Binding")
 
     if 'mdmfvz.Quality q' not in tables_list:
       tables_list.append('mdmfvz.Quality q')
@@ -398,6 +408,7 @@ def search_button_logic():
   if bin_str[6] == '1':
     flags['Quality'] = 1
     results_list.append('q.Grade')
+    labels.append("Grade")
 
     if 'mdmfvz.Quality q' not in tables_list:
       tables_list.append('mdmfvz.Quality q')
@@ -408,6 +419,7 @@ def search_button_logic():
   if bin_str[7] == '1':
     flags['Prices'] = 1
     results_list.append('pr.Price')
+    labels.append("Price")
 
     if 'mdmfvz.Prices pr' not in tables_list:
       tables_list.append('mdmfvz.Prices pr')
@@ -416,6 +428,7 @@ def search_button_logic():
   if bin_str[8] == '1':
     flags['Publishers'] = 1
     results_list.append('pu.Publisher')
+    labels.append("Publisher")
 
     if 'mdmfvz.Publishers pu' not in tables_list:
       tables_list.append('mdmfvz.Publishers pu')
@@ -424,6 +437,7 @@ def search_button_logic():
   if bin_str[9] == '1':
     flags['Languages'] = 1
     results_list.append('L.Language')
+    labels.append("Language")
 
     if 'mdmfvz.Languages L' not in tables_list:
       tables_list.append('mdmfvz.Languages L')
@@ -477,7 +491,15 @@ def search_button_logic():
   for i in curr:
     results.append(i)
 
-  print(results)
+
+  tree = ttk.Treeview(inner_frame, columns=labels, show='headings')
+  for col in labels:
+    tree.heading(col, text=col)
+  for i in results:
+    tree.insert("", "end", values=(i))
+
+  #Kyle-sama plz fix
+  tree.grid(row=6,column=0,columnspan=4,sticky="NSEW")
 
   
 
