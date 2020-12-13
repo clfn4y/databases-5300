@@ -259,9 +259,9 @@ def search_button_logic():
       where_list.append(query_type_str)
     # neither empty
     else:
-      query_type_str += 'b.Release_Date > '
+      query_type_str += 'b.Release_Date >= '
       query_type_str += query_str1.get()
-      query_type_str += '\n\tAND b.Release_Date < '
+      query_type_str += '\n\tAND b.Release_Date <= '
       query_type_str += query_str2.get()
       where_list.append(query_type_str)
   # query by author name/names, searches by substring
@@ -331,9 +331,9 @@ def search_button_logic():
       where_list.append(query_type_str)
     # neither empty
     else:
-      query_type_str += 'pr.Price > '
+      query_type_str += 'pr.Price >= '
       query_type_str += query_str1.get()
-      query_type_str += '\n\tAND pr.Price < '
+      query_type_str += '\n\tAND pr.Price <= '
       query_type_str += query_str2.get()
       where_list.append(query_type_str)
   
