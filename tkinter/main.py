@@ -367,7 +367,7 @@ def search_button_logic():
   # "Origin" checked
   if bin_str[2] == '1':
     flags['Books'] = 1
-    results_list.append('b.Location_of_Origin')
+    results_list.append('b.Location')
     labels.append("Origin")
 
     if 'mdmfvz.Books b' not in tables_list:
